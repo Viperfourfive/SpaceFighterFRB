@@ -54,8 +54,11 @@ namespace SpaceFighterFRB.Entities
 		static List<string> mRegisteredUnloads = new List<string>();
 		static List<string> LoadedContentManagers = new List<string>();
 		
-		public float enemiesPerSecond = 5f;
+		public float enemiesPerSecond = 0.5f;
 		public float spawnRateIncrease = 0.5f;
+		public float enemiesPerWave = 10f;
+		public int enemyType = 0;
+		public int enemiesSpawned = 0;
 		protected Layer LayerProvidedByContainer = null;
 
         public enemySpawner()
@@ -146,8 +149,11 @@ namespace SpaceFighterFRB.Entities
 			if (callOnContainedElements)
 			{
 			}
-			enemiesPerSecond = 5f;
+			enemiesPerSecond = 0.5f;
 			spawnRateIncrease = 0.5f;
+			enemiesPerWave = 10f;
+			enemyType = 0;
+			enemiesSpawned = 0;
 		}
 		public virtual void ConvertToManuallyUpdated ()
 		{

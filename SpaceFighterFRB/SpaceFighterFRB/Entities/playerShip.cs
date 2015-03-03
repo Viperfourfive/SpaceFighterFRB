@@ -90,10 +90,12 @@ namespace SpaceFighterFRB.Entities
             if (mGamePad.RightStick.Position.X != 0 || mGamePad.RightStick.Position.Y != 0)
             {
                 this.lastRotationZ = (float)mGamePad.RightStick.Angle - 1.57079633f;
-                //another way
-                //this.lastRotationZ = (float)Math.Atan2(-mGamePad.RightStick.Position.Y,
-                //                                       -mGamePad.RightStick.Position.X) + 1.57079633f;
-                Shoot();
+
+                if (TimeManager.SecondsSince(lastShotFired) > startingFireRate)
+                {
+                    Shoot();
+                    lastShotFired = TimeManager.CurrentTime;
+                }
             }
             this.RotationZ = lastRotationZ;
         }

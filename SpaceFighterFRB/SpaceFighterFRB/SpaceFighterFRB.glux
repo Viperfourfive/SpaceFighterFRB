@@ -375,7 +375,7 @@
           </Properties>
           <Name>enemiesPerSecond</Name>
           <Type>float</Type>
-          <DefaultValue xsi:type="xsd:float">5</DefaultValue>
+          <DefaultValue xsi:type="xsd:float">0.5</DefaultValue>
         </CustomVariable>
         <CustomVariable>
           <Properties>
@@ -387,6 +387,39 @@
           <Name>spawnRateIncrease</Name>
           <Type>float</Type>
           <DefaultValue xsi:type="xsd:float">0.5</DefaultValue>
+        </CustomVariable>
+        <CustomVariable>
+          <Properties>
+            <PropertySave>
+              <Name>Type</Name>
+              <ValueAsString>float</ValueAsString>
+            </PropertySave>
+          </Properties>
+          <Name>enemiesPerWave</Name>
+          <Type>float</Type>
+          <DefaultValue xsi:type="xsd:float">10</DefaultValue>
+        </CustomVariable>
+        <CustomVariable>
+          <Properties>
+            <PropertySave>
+              <Name>Type</Name>
+              <ValueAsString>int</ValueAsString>
+            </PropertySave>
+          </Properties>
+          <Name>enemyType</Name>
+          <Type>int</Type>
+          <DefaultValue xsi:type="xsd:int">0</DefaultValue>
+        </CustomVariable>
+        <CustomVariable>
+          <Properties>
+            <PropertySave>
+              <Name>Type</Name>
+              <ValueAsString>int</ValueAsString>
+            </PropertySave>
+          </Properties>
+          <Name>enemiesSpawned</Name>
+          <Type>int</Type>
+          <DefaultValue xsi:type="xsd:int">0</DefaultValue>
         </CustomVariable>
       </CustomVariables>
       <Name>Entities\enemySpawner</Name>
@@ -837,9 +870,9 @@
               <ValueAsString>float</ValueAsString>
             </PropertySave>
           </Properties>
-          <Name>fireRate</Name>
+          <Name>startingFireRate</Name>
           <Type>float</Type>
-          <DefaultValue xsi:type="xsd:float">750</DefaultValue>
+          <DefaultValue xsi:type="xsd:float">0.025</DefaultValue>
         </CustomVariable>
         <CustomVariable>
           <Properties>
@@ -851,6 +884,17 @@
           <Name>startingHP</Name>
           <Type>int</Type>
           <DefaultValue xsi:type="xsd:int">5</DefaultValue>
+        </CustomVariable>
+        <CustomVariable>
+          <Properties>
+            <PropertySave>
+              <Name>Type</Name>
+              <ValueAsString>double</ValueAsString>
+            </PropertySave>
+          </Properties>
+          <Name>lastShotFired</Name>
+          <Type>double</Type>
+          <DefaultValue xsi:type="xsd:double">-1000</DefaultValue>
         </CustomVariable>
       </CustomVariables>
       <Name>Entities\playerShip</Name>

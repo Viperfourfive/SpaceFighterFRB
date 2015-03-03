@@ -73,8 +73,9 @@ namespace SpaceFighterFRB.Entities
 		}
 		public float movementSpeed = 5f;
 		public float lastRotationZ;
-		public float fireRate = 750f;
+		public float startingFireRate = 0.025f;
 		public int startingHP = 5;
+		public System.Double lastShotFired = -1000;
 		private FlatRedBall.Math.Geometry.ShapeCollection mGeneratedCollision;
 		public FlatRedBall.Math.Geometry.ShapeCollection Collision
 		{
@@ -243,8 +244,9 @@ namespace SpaceFighterFRB.Entities
 			}
 			mCollisionMesh.Visible = true;
 			movementSpeed = 5f;
-			fireRate = 750f;
+			startingFireRate = 0.025f;
 			startingHP = 5;
+			lastShotFired = -1000;
 		}
 		public virtual void ConvertToManuallyUpdated ()
 		{

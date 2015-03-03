@@ -51,13 +51,29 @@ namespace SpaceFighterFRB.Entities
 
 		private void CustomActivity()
 		{
+            if (enemiesSpawned >= enemiesPerWave)
+            {
+                enemyType = PickEnemyType();
+                enemiesSpawned = 0;
+            }
+            
             if (isTimeToSpawn)
             {
-                SpawnEnemy();
+                switch (enemyType)
+                {
+                    case 0:
+                        
+                        SpawnSeekerEnemy();
+                        break;
+                    case 1:
+                        SpawnVectorSpeederEnemy();
+                        break;
+                    //Add more for more enemy types & number in Random generator
+                }
             }
-
+            enemiesSpawned++;
             //increases enemy spawn speed, statically, by spawnRateIncrease
-            //this.enemiesPerSecond += TimeManager.SecondDifference * this.spawnRateIncrease;
+            this.enemiesPerSecond += TimeManager.SecondDifference * this.spawnRateIncrease;
 		}
 
 		private void CustomDestroy()
@@ -72,19 +88,37 @@ namespace SpaceFighterFRB.Entities
 
         }
 
-        void SpawnEnemy()
+        int PickEnemyType()
         {
-            Vector3 position = GetNewEnemyPosition();
+            return enemyType = FlatRedBallServices.Random.Next(2);
+        }
+
+        void SpawnSeekerEnemy()
+        {
+            Vector3 position = GetNewCornerEnemyPosition();
             Vector3 angle = FindAngleToCenterScreen(position);
 
-            enemyShip _es = enemyShipFactory.CreateNew();
-            _es.Position = position;
-            _es.Velocity = angle * _es.movementSpeed; //need to reference enemyShip?
+            enemyShip _es0 = enemyShipFactory.CreateNew();
+            _es0.Position = position;
+            _es0.Velocity = angle * _es0.movementSpeed;
 
             mLastSpawnTime = FlatRedBall.Screens.ScreenManager.CurrentScreen.PauseAdjustedCurrentTime;
         }
 
-        Vector3 GetNewEnemyPosition()
+        void SpawnVectorSpeederEnemy()
+        {
+            Vector3 position = GetNewBorderEnemyPosition();
+            Vector3 direction = FindEnemyShootingDirection(position);
+
+            enemyShip _es1 = enemyShipFactory.CreateNew();
+            _es1.Position = position;
+            _es1.Velocity = direction * _es1.movementSpeed;
+
+            mLastSpawnTime = FlatRedBall.Screens.ScreenManager.CurrentScreen.PauseAdjustedCurrentTime;
+
+        }
+
+        Vector3 GetNewCornerEnemyPosition()
         {
             int randomCorner = FlatRedBallServices.Random.Next(4);
 
@@ -122,6 +156,53 @@ namespace SpaceFighterFRB.Entities
             return new Vector3(x, y, 0);
         }
 
+        private Vector3 GetNewBorderEnemyPosition()
+        {
+            int randomSide = FlatRedBallServices.Random.Next(4);
+
+            //Creates at screen edges, change to this after testing.
+            float top = SpriteManager.Camera.AbsoluteTopYEdgeAt(0);
+            float bottom = SpriteManager.Camera.AbsoluteBottomYEdgeAt(0);
+            float left = SpriteManager.Camera.AbsoluteLeftXEdgeAt(0);
+            float right = SpriteManager.Camera.AbsoluteRightXEdgeAt(0);
+
+            float minX = 0;
+            float maxX = 0;
+            float minY = 0;
+            float maxY = 0;
+            switch (randomSide)
+            {
+                case 0: // top
+                    minX = left;
+                    maxX = right;
+                    minY = top;
+                    maxY = top;
+                    break;
+                case 1: // right
+                    minX = right;
+                    maxX = right;
+                    minY = bottom;
+                    maxY = top;
+                    break;
+                case 2: // bottom
+                    minX = left;
+                    maxX = right;
+                    minY = bottom;
+                    maxY = bottom;
+                    break;
+                case 3: // left
+                    minX = left;
+                    maxX = left;
+                    minY = bottom;
+                    maxY = top;
+                    break;
+            }
+            float x = minX + (float)(FlatRedBallServices.Random.NextDouble() * (maxX - minX));
+            float y = minY + (float)(FlatRedBallServices.Random.NextDouble() * (maxY - minY));
+            
+            return new Vector3(x, y, 0);
+        }
+                
          private Vector3 FindAngleToCenterScreen(Vector3 position)
          {
              Vector3 angleToPlayer = position;
@@ -129,5 +210,14 @@ namespace SpaceFighterFRB.Entities
          
              return angleToPlayer;
          }
+
+        private Vector3 FindEnemyShootingDirection(Vector3 position)
+        {
+            Vector3 centerOfScreen = new Vector3(SpriteManager.Camera.X, SpriteManager.Camera.Y, 0);
+            var direction = centerOfScreen - position;
+            direction.Normalize();
+            
+            return direction;
+        }
 	}
 }

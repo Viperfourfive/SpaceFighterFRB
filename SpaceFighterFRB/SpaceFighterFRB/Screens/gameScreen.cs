@@ -86,7 +86,6 @@ namespace SpaceFighterFRB.Screens
             {
                 playerShipList[0].CollisionMesh.CollideAgainstBounce(gameScreenCollisionMesh, 0, 10, 10);
                 EnemyVsPlayer();
-                //Below doesn't work... Arguement out of range expection
             }            
             BoundsCollision();
             BulletVsEnemy();
@@ -169,13 +168,6 @@ namespace SpaceFighterFRB.Screens
                         enemyShip _enemyShip2 = enemyShipList[j];
                         /*bounce each other*/
                         _enemyShip1.CollisionMesh.CollideAgainstMove(_enemyShip2.CollisionMesh, 10, 10);
-                        /*kill each other*/
-                        //if (_enemyShip1.CollisionMesh.CollideAgainstMove(_enemyShip2.CollisionMesh, 0, 1))
-                        //{
-                        //    _enemyShip1.Destroy();
-                        //    _enemyShip2.Destroy();
-                        //    break;
-                        //}
                     }
                 }
             }
