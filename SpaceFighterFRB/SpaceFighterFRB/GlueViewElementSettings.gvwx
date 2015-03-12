@@ -85,5 +85,19 @@
       </CameraSave>
       <ElementName>Entities\debugHUD</ElementName>
     </ElementCameraSave>
+    <ElementCameraSave>
+      <CameraSave>
+        <X>0</X>
+        <Y>0</Y>
+        <Z>40</Z>
+        <Orthogonal>true</Orthogonal>
+        <OrthogonalHeight>59.0862579</OrthogonalHeight>
+        <OrthogonalWidth>-1</OrthogonalWidth>
+        <NearClipPlane>1</NearClipPlane>
+        <FarClipPlane>1000</FarClipPlane>
+        <AspectRatio>1.33333337</AspectRatio>
+      </CameraSave>
+      <ElementName>Entities\speeder</ElementName>
+    </ElementCameraSave>
   </ElementCameraSaves>
 </ElementSettingsSave>

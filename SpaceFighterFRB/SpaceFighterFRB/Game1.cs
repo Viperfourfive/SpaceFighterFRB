@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 
 using FlatRedBall;
+using FlatRedBall.Debugging;
 using FlatRedBall.Graphics;
 using FlatRedBall.Utilities;
 using FlatRedBall.Screens;
@@ -59,12 +60,14 @@ namespace SpaceFighterFRB
         protected override void Update(GameTime gameTime)
         {
             FlatRedBallServices.Update(gameTime);
+            //not working//FlatRedBall.Debugging.Debugger.WriteAutomaticallyUpdatedObjectInformation();
+            //http://documentation.flatredball.com/frb/docs/index.php?title=FlatRedballXna:Tutorials:Manually_Updated_Objects:Measuring_Automatic_Updates
 
             FlatRedBall.Screens.ScreenManager.Activity();
 
             FlatRedBall.Debugging.Debugger.TextCorner = FlatRedBall.Debugging.Debugger.Corner.BottomLeft;
             FlatRedBall.Debugging.Debugger.Write(SpriteManager.ManagedPositionedObjects.Count);
-
+            
             base.Update(gameTime);
         }
 

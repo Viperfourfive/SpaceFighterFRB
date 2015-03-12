@@ -49,6 +49,7 @@ namespace SpaceFighterFRB.Screens
 		private SpaceFighterFRB.Entities.gameHUD gameHUDInstance;
 		private SpaceFighterFRB.Entities.enemySpawner enemySpawnerInstance;
 		private PositionedObjectList<SpaceFighterFRB.Entities.playerShip> playerShipList;
+		private PositionedObjectList<SpaceFighterFRB.Entities.speeder> speederList;
 
 		public gameScreen()
 			: base("gameScreen")
@@ -69,6 +70,8 @@ namespace SpaceFighterFRB.Screens
 			enemySpawnerInstance.Name = "enemySpawnerInstance";
 			playerShipList = new PositionedObjectList<SpaceFighterFRB.Entities.playerShip>();
 			playerShipList.Name = "playerShipList";
+			speederList = new PositionedObjectList<SpaceFighterFRB.Entities.speeder>();
+			speederList.Name = "speederList";
 			
 			
 			PostInitialize();
@@ -86,6 +89,7 @@ namespace SpaceFighterFRB.Screens
 			gameScreenCollisionMesh.AddToManagers(mLayer);
 			bulletFactory.Initialize(bulletList, ContentManagerName);
 			enemyShipFactory.Initialize(enemyShipList, ContentManagerName);
+			speederFactory.Initialize(speederList, ContentManagerName);
 			gameHUDInstance.AddToManagers(mLayer);
 			enemySpawnerInstance.AddToManagers(mLayer);
 			base.AddToManagers();
@@ -126,6 +130,14 @@ namespace SpaceFighterFRB.Screens
 						playerShipList[i].Activity();
 					}
 				}
+				for (int i = speederList.Count - 1; i > -1; i--)
+				{
+					if (i < speederList.Count)
+					{
+						// We do the extra if-check because activity could destroy any number of entities
+						speederList[i].Activity();
+					}
+				}
 			}
 			else
 			{
@@ -147,6 +159,7 @@ namespace SpaceFighterFRB.Screens
 			// Generated Destroy
 			bulletFactory.Destroy();
 			enemyShipFactory.Destroy();
+			speederFactory.Destroy();
 			if (this.UnloadsContentManagerWhenDestroyed && ContentManagerName != "Global")
 			{
 				gameScreenCollisionMesh.RemoveFromManagers(ContentManagerName != "Global");
@@ -167,6 +180,7 @@ namespace SpaceFighterFRB.Screens
 			bulletList.MakeOneWay();
 			enemyShipList.MakeOneWay();
 			playerShipList.MakeOneWay();
+			speederList.MakeOneWay();
 			for (int i = bulletList.Count - 1; i > -1; i--)
 			{
 				bulletList[i].Destroy();
@@ -189,9 +203,14 @@ namespace SpaceFighterFRB.Screens
 			{
 				playerShipList[i].Destroy();
 			}
+			for (int i = speederList.Count - 1; i > -1; i--)
+			{
+				speederList[i].Destroy();
+			}
 			bulletList.MakeTwoWay();
 			enemyShipList.MakeTwoWay();
 			playerShipList.MakeTwoWay();
+			speederList.MakeTwoWay();
 
 			base.Destroy();
 
@@ -227,6 +246,10 @@ namespace SpaceFighterFRB.Screens
 			{
 				playerShipList[i].Destroy();
 			}
+			for (int i = speederList.Count - 1; i > -1; i--)
+			{
+				speederList[i].Destroy();
+			}
 		}
 		public virtual void AssignCustomVariables (bool callOnContainedElements)
 		{
@@ -251,6 +274,10 @@ namespace SpaceFighterFRB.Screens
 			for (int i = 0; i < playerShipList.Count; i++)
 			{
 				playerShipList[i].ConvertToManuallyUpdated();
+			}
+			for (int i = 0; i < speederList.Count; i++)
+			{
+				speederList[i].ConvertToManuallyUpdated();
 			}
 		}
 		public static void LoadStaticContent (string contentManagerName)

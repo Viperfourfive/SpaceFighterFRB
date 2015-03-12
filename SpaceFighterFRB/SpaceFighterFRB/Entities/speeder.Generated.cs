@@ -9,6 +9,7 @@ using GuiManager = FlatRedBall.Gui.GuiManager;
 using SpaceFighterFRB.Screens;
 using FlatRedBall.Graphics;
 using FlatRedBall.Math;
+using SpaceFighterFRB.Performance;
 using SpaceFighterFRB.Entities;
 using SpaceFighterFRB.Factories;
 using FlatRedBall;
@@ -39,7 +40,7 @@ using Model = Microsoft.Xna.Framework.Graphics.Model;
 
 namespace SpaceFighterFRB.Entities
 {
-	public partial class playerShip : PositionedObject, IDestroyable, FlatRedBall.Math.Geometry.ICollidable
+	public partial class speeder : PositionedObject, IDestroyable, IPoolable
 	{
         // This is made global so that static lazy-loaded content can access it.
         public static string ContentManagerName
@@ -55,12 +56,11 @@ namespace SpaceFighterFRB.Entities
 		static object mLockObject = new object();
 		static List<string> mRegisteredUnloads = new List<string>();
 		static List<string> LoadedContentManagers = new List<string>();
-		protected static FlatRedBall.Math.Geometry.ShapeCollection collisionMesh;
-		protected static Microsoft.Xna.Framework.Graphics.Texture2D ship;
+		protected static Microsoft.Xna.Framework.Graphics.Texture2D enemyShip2;
 		
 		private FlatRedBall.Sprite Sprite;
-		private FlatRedBall.Math.Geometry.ShapeCollection mCollisionMesh;
-		public FlatRedBall.Math.Geometry.ShapeCollection CollisionMesh
+		private FlatRedBall.Math.Geometry.Circle mCollisionMesh;
+		public FlatRedBall.Math.Geometry.Circle CollisionMesh
 		{
 			get
 			{
@@ -71,34 +71,25 @@ namespace SpaceFighterFRB.Entities
 				mCollisionMesh = value;
 			}
 		}
-		public float movementSpeed = 5f;
-		public float lastRotationZ;
-		public float startingFireRate = 0.025f;
-		public int startingHP = 5;
-		public System.Double lastShotFired = -1000;
-		private FlatRedBall.Math.Geometry.ShapeCollection mGeneratedCollision;
-		public FlatRedBall.Math.Geometry.ShapeCollection Collision
-		{
-			get
-			{
-				return mGeneratedCollision;
-			}
-		}
+		public float movementSpeed = 500f;
+		public int pointsWorth = 1;
+		public int Index { get; set; }
+		public bool Used { get; set; }
 		protected Layer LayerProvidedByContainer = null;
 
-        public playerShip()
+        public speeder()
             : this(FlatRedBall.Screens.ScreenManager.CurrentScreen.ContentManagerName, true)
         {
 
         }
 
-        public playerShip(string contentManagerName) :
+        public speeder(string contentManagerName) :
             this(contentManagerName, true)
         {
         }
 
 
-        public playerShip(string contentManagerName, bool addToManagers) :
+        public speeder(string contentManagerName, bool addToManagers) :
 			base()
 		{
 			// Don't delete this:
@@ -111,10 +102,10 @@ namespace SpaceFighterFRB.Entities
 		{
 			// Generated Initialize
 			LoadStaticContent(ContentManagerName);
-			mCollisionMesh = collisionMesh.Clone();
 			Sprite = new FlatRedBall.Sprite();
 			Sprite.Name = "Sprite";
-			mGeneratedCollision = new FlatRedBall.Math.Geometry.ShapeCollection();
+			mCollisionMesh = new FlatRedBall.Math.Geometry.Circle();
+			mCollisionMesh.Name = "mCollisionMesh";
 			
 			PostInitialize();
 			if (addToManagers)
@@ -131,14 +122,14 @@ namespace SpaceFighterFRB.Entities
 			LayerProvidedByContainer = layerToAddTo;
 			SpriteManager.AddPositionedObject(this);
 			SpriteManager.AddToLayer(Sprite, LayerProvidedByContainer);
-			mCollisionMesh.AddToManagers(LayerProvidedByContainer);
+			ShapeManager.AddToLayer(mCollisionMesh, LayerProvidedByContainer);
 		}
 		public virtual void AddToManagers (Layer layerToAddTo)
 		{
 			LayerProvidedByContainer = layerToAddTo;
 			SpriteManager.AddPositionedObject(this);
 			SpriteManager.AddToLayer(Sprite, LayerProvidedByContainer);
-			mCollisionMesh.AddToManagers(LayerProvidedByContainer);
+			ShapeManager.AddToLayer(mCollisionMesh, LayerProvidedByContainer);
 			AddToManagersBottomUp(layerToAddTo);
 			CustomInitialize();
 		}
@@ -156,14 +147,18 @@ namespace SpaceFighterFRB.Entities
 		{
 			// Generated Destroy
 			SpriteManager.RemovePositionedObject(this);
+			if (Used)
+			{
+				speederFactory.MakeUnused(this, false);
+			}
 			
 			if (Sprite != null)
 			{
-				SpriteManager.RemoveSprite(Sprite);
+				SpriteManager.RemoveSpriteOneWay(Sprite);
 			}
 			if (CollisionMesh != null)
 			{
-				CollisionMesh.RemoveFromManagers(ContentManagerName != "Global");
+				ShapeManager.RemoveOneWay(CollisionMesh);
 			}
 
 
@@ -180,27 +175,22 @@ namespace SpaceFighterFRB.Entities
 				Sprite.CopyAbsoluteToRelative();
 				Sprite.AttachTo(this, false);
 			}
-			Sprite.Texture = ship;
-			Sprite.TextureScale = 3f;
-			if (Sprite.Parent == null)
+			Sprite.Texture = enemyShip2;
+			Sprite.TextureScale = 0.45f;
+			if (mCollisionMesh.Parent == null)
 			{
-				Sprite.X = 0f;
+				mCollisionMesh.CopyAbsoluteToRelative();
+				mCollisionMesh.AttachTo(this, false);
+			}
+			CollisionMesh.Radius = 7f;
+			if (CollisionMesh.Parent == null)
+			{
+				CollisionMesh.X = 0f;
 			}
 			else
 			{
-				Sprite.RelativeX = 0f;
+				CollisionMesh.RelativeX = 0f;
 			}
-			if (Sprite.Parent == null)
-			{
-				Sprite.Y = 0f;
-			}
-			else
-			{
-				Sprite.RelativeY = 0f;
-			}
-			mCollisionMesh.CopyAbsoluteToRelative(false);
-			mCollisionMesh.AttachAllDetachedTo(this, false);
-			CollisionMesh.Visible = false;
 			FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = oldShapeManagerSuppressAdd;
 		}
 		public virtual void AddToManagersBottomUp (Layer layerToAddTo)
@@ -216,7 +206,7 @@ namespace SpaceFighterFRB.Entities
 			}
 			if (CollisionMesh != null)
 			{
-				CollisionMesh.RemoveFromManagers(false);
+				ShapeManager.RemoveOneWay(CollisionMesh);
 			}
 		}
 		public virtual void AssignCustomVariables (bool callOnContainedElements)
@@ -224,29 +214,19 @@ namespace SpaceFighterFRB.Entities
 			if (callOnContainedElements)
 			{
 			}
-			Sprite.Texture = ship;
-			Sprite.TextureScale = 3f;
-			if (Sprite.Parent == null)
+			Sprite.Texture = enemyShip2;
+			Sprite.TextureScale = 0.45f;
+			mCollisionMesh.Radius = 7f;
+			if (mCollisionMesh.Parent == null)
 			{
-				Sprite.X = 0f;
+				mCollisionMesh.X = 0f;
 			}
 			else
 			{
-				Sprite.RelativeX = 0f;
+				mCollisionMesh.RelativeX = 0f;
 			}
-			if (Sprite.Parent == null)
-			{
-				Sprite.Y = 0f;
-			}
-			else
-			{
-				Sprite.RelativeY = 0f;
-			}
-			mCollisionMesh.Visible = false;
-			movementSpeed = 5f;
-			startingFireRate = 0.025f;
-			startingHP = 5;
-			lastShotFired = -1000;
+			movementSpeed = 500f;
+			pointsWorth = 1;
 		}
 		public virtual void ConvertToManuallyUpdated ()
 		{
@@ -279,20 +259,15 @@ namespace SpaceFighterFRB.Entities
 				{
 					if (!mRegisteredUnloads.Contains(ContentManagerName) && ContentManagerName != FlatRedBallServices.GlobalContentManager)
 					{
-						FlatRedBallServices.GetContentManagerByName(ContentManagerName).AddUnloadMethod("playerShipStaticUnload", UnloadStaticContent);
+						FlatRedBallServices.GetContentManagerByName(ContentManagerName).AddUnloadMethod("speederStaticUnload", UnloadStaticContent);
 						mRegisteredUnloads.Add(ContentManagerName);
 					}
 				}
-				if (!FlatRedBallServices.IsLoaded<FlatRedBall.Math.Geometry.ShapeCollection>(@"content/entities/playership/collisionmesh.shcx", ContentManagerName))
+				if (!FlatRedBallServices.IsLoaded<Microsoft.Xna.Framework.Graphics.Texture2D>(@"content/entities/speeder/enemyship2.png", ContentManagerName))
 				{
 					registerUnload = true;
 				}
-				collisionMesh = FlatRedBallServices.Load<FlatRedBall.Math.Geometry.ShapeCollection>(@"content/entities/playership/collisionmesh.shcx", ContentManagerName);
-				if (!FlatRedBallServices.IsLoaded<Microsoft.Xna.Framework.Graphics.Texture2D>(@"content/entities/playership/ship.png", ContentManagerName))
-				{
-					registerUnload = true;
-				}
-				ship = FlatRedBallServices.Load<Microsoft.Xna.Framework.Graphics.Texture2D>(@"content/entities/playership/ship.png", ContentManagerName);
+				enemyShip2 = FlatRedBallServices.Load<Microsoft.Xna.Framework.Graphics.Texture2D>(@"content/entities/speeder/enemyship2.png", ContentManagerName);
 			}
 			if (registerUnload && ContentManagerName != FlatRedBallServices.GlobalContentManager)
 			{
@@ -300,7 +275,7 @@ namespace SpaceFighterFRB.Entities
 				{
 					if (!mRegisteredUnloads.Contains(ContentManagerName) && ContentManagerName != FlatRedBallServices.GlobalContentManager)
 					{
-						FlatRedBallServices.GetContentManagerByName(ContentManagerName).AddUnloadMethod("playerShipStaticUnload", UnloadStaticContent);
+						FlatRedBallServices.GetContentManagerByName(ContentManagerName).AddUnloadMethod("speederStaticUnload", UnloadStaticContent);
 						mRegisteredUnloads.Add(ContentManagerName);
 					}
 				}
@@ -316,14 +291,9 @@ namespace SpaceFighterFRB.Entities
 			}
 			if (LoadedContentManagers.Count == 0)
 			{
-				if (collisionMesh != null)
+				if (enemyShip2 != null)
 				{
-					collisionMesh.RemoveFromManagers(ContentManagerName != "Global");
-					collisionMesh= null;
-				}
-				if (ship != null)
-				{
-					ship= null;
+					enemyShip2= null;
 				}
 			}
 		}
@@ -332,10 +302,8 @@ namespace SpaceFighterFRB.Entities
 		{
 			switch(memberName)
 			{
-				case  "collisionMesh":
-					return collisionMesh;
-				case  "ship":
-					return ship;
+				case  "enemyShip2":
+					return enemyShip2;
 			}
 			return null;
 		}
@@ -343,10 +311,8 @@ namespace SpaceFighterFRB.Entities
 		{
 			switch(memberName)
 			{
-				case  "collisionMesh":
-					return collisionMesh;
-				case  "ship":
-					return ship;
+				case  "enemyShip2":
+					return enemyShip2;
 			}
 			return null;
 		}
@@ -354,10 +320,8 @@ namespace SpaceFighterFRB.Entities
 		{
 			switch(memberName)
 			{
-				case  "collisionMesh":
-					return collisionMesh;
-				case  "ship":
-					return ship;
+				case  "enemyShip2":
+					return enemyShip2;
 			}
 			return null;
 		}

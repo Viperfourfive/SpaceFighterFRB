@@ -56,9 +56,10 @@ namespace SpaceFighterFRB.Entities
 		
 		public float enemiesPerSecond = 0.5f;
 		public float spawnRateIncrease = 0.5f;
-		public float enemiesPerWave = 10f;
+		public float enemiesPerWave = 100f;
 		public int enemyType = 0;
 		public int enemiesSpawned = 0;
+		public int enemiesAlive = 0;
 		protected Layer LayerProvidedByContainer = null;
 
         public enemySpawner()
@@ -151,9 +152,10 @@ namespace SpaceFighterFRB.Entities
 			}
 			enemiesPerSecond = 0.5f;
 			spawnRateIncrease = 0.5f;
-			enemiesPerWave = 10f;
+			enemiesPerWave = 100f;
 			enemyType = 0;
 			enemiesSpawned = 0;
+			enemiesAlive = 0;
 		}
 		public virtual void ConvertToManuallyUpdated ()
 		{

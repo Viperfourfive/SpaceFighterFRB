@@ -14,9 +14,16 @@ namespace SpaceFighterFRB
             private set;
         }
 
+        public static EnemyData EnemyData
+        {
+            get;
+            private set;
+        }
+
         public static void Initialize()
         {
             PlayerData = new PlayerData();
+            EnemyData = new EnemyData();
         }
     }
 }
