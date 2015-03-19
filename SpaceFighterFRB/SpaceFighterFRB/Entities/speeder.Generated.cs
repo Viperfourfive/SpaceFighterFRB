@@ -40,7 +40,7 @@ using Model = Microsoft.Xna.Framework.Graphics.Model;
 
 namespace SpaceFighterFRB.Entities
 {
-	public partial class speeder : PositionedObject, IDestroyable, IPoolable
+	public partial class speeder : PositionedObject, IDestroyable, IPoolable, FlatRedBall.Math.Geometry.ICollidable
 	{
         // This is made global so that static lazy-loaded content can access it.
         public static string ContentManagerName
@@ -53,6 +53,55 @@ namespace SpaceFighterFRB.Entities
 		#if DEBUG
 		static bool HasBeenLoadedWithGlobalContentManager = false;
 		#endif
+		public enum VariableState
+		{
+			Uninitialized = 0, //This exists so that the first set call actually does something
+			Unknown = 1, //This exists so that if the entity is actually a child entity and has set a child state, you will get this
+			spawning = 2, 
+			speeding = 3
+		}
+		protected int mCurrentState = 0;
+		public Entities.speeder.VariableState CurrentState
+		{
+			get
+			{
+				if (Enum.IsDefined(typeof(VariableState), mCurrentState))
+				{
+					return (VariableState)mCurrentState;
+				}
+				else
+				{
+					return VariableState.Unknown;
+				}
+			}
+			set
+			{
+				mCurrentState = (int)value;
+				switch(CurrentState)
+				{
+					case  VariableState.Uninitialized:
+						break;
+					case  VariableState.Unknown:
+						break;
+					case  VariableState.spawning:
+						movementSpeed = 0f;
+						pointsWorth = 0;
+						SpriteBlue = 1f;
+						SpriteGreen = 1f;
+						SpriteRed = 1f;
+						SpriteColorOperation = FlatRedBall.Graphics.ColorOperation.ColorTextureAlpha;
+						break;
+					case  VariableState.speeding:
+						movementSpeed = 250f;
+						pointsWorth = 1;
+						SpriteBlue = 0f;
+						SpriteGreen = 0f;
+						SpriteRed = 1f;
+						SpriteColorOperation = FlatRedBall.Graphics.ColorOperation.ColorTextureAlpha;
+						break;
+				}
+			}
+		}
 		static object mLockObject = new object();
 		static List<string> mRegisteredUnloads = new List<string>();
 		static List<string> LoadedContentManagers = new List<string>();
@@ -73,8 +122,60 @@ namespace SpaceFighterFRB.Entities
 		}
 		public float movementSpeed = 500f;
 		public int pointsWorth = 1;
+		public float SpriteBlue
+		{
+			get
+			{
+				return Sprite.Blue;
+			}
+			set
+			{
+				Sprite.Blue = value;
+			}
+		}
+		public float SpriteGreen
+		{
+			get
+			{
+				return Sprite.Green;
+			}
+			set
+			{
+				Sprite.Green = value;
+			}
+		}
+		public float SpriteRed
+		{
+			get
+			{
+				return Sprite.Red;
+			}
+			set
+			{
+				Sprite.Red = value;
+			}
+		}
+		public FlatRedBall.Graphics.ColorOperation SpriteColorOperation
+		{
+			get
+			{
+				return Sprite.ColorOperation;
+			}
+			set
+			{
+				Sprite.ColorOperation = value;
+			}
+		}
 		public int Index { get; set; }
 		public bool Used { get; set; }
+		private FlatRedBall.Math.Geometry.ShapeCollection mGeneratedCollision;
+		public FlatRedBall.Math.Geometry.ShapeCollection Collision
+		{
+			get
+			{
+				return mGeneratedCollision;
+			}
+		}
 		protected Layer LayerProvidedByContainer = null;
 
         public speeder()
@@ -106,6 +207,8 @@ namespace SpaceFighterFRB.Entities
 			Sprite.Name = "Sprite";
 			mCollisionMesh = new FlatRedBall.Math.Geometry.Circle();
 			mCollisionMesh.Name = "mCollisionMesh";
+			mGeneratedCollision = new FlatRedBall.Math.Geometry.ShapeCollection();
+			mGeneratedCollision.Circles.AddOneWay(mCollisionMesh);
 			
 			PostInitialize();
 			if (addToManagers)
@@ -227,6 +330,10 @@ namespace SpaceFighterFRB.Entities
 			}
 			movementSpeed = 500f;
 			pointsWorth = 1;
+			SpriteBlue = 0f;
+			SpriteGreen = 0f;
+			SpriteRed = 0f;
+			SpriteColorOperation = FlatRedBall.Graphics.ColorOperation.ColorTextureAlpha;
 		}
 		public virtual void ConvertToManuallyUpdated ()
 		{
@@ -295,6 +402,168 @@ namespace SpaceFighterFRB.Entities
 				{
 					enemyShip2= null;
 				}
+			}
+		}
+		static VariableState mLoadingState = VariableState.Uninitialized;
+		public static VariableState LoadingState
+		{
+			get
+			{
+				return mLoadingState;
+			}
+			set
+			{
+				mLoadingState = value;
+			}
+		}
+		public FlatRedBall.Instructions.Instruction InterpolateToState (VariableState stateToInterpolateTo, double secondsToTake)
+		{
+			switch(stateToInterpolateTo)
+			{
+				case  VariableState.spawning:
+					Sprite.BlueRate = (1f - Sprite.Blue) / (float)secondsToTake;
+					Sprite.GreenRate = (1f - Sprite.Green) / (float)secondsToTake;
+					Sprite.RedRate = (1f - Sprite.Red) / (float)secondsToTake;
+					break;
+				case  VariableState.speeding:
+					Sprite.BlueRate = (0f - Sprite.Blue) / (float)secondsToTake;
+					Sprite.GreenRate = (0f - Sprite.Green) / (float)secondsToTake;
+					Sprite.RedRate = (1f - Sprite.Red) / (float)secondsToTake;
+					break;
+			}
+			var instruction = new FlatRedBall.Instructions.DelegateInstruction<VariableState>(StopStateInterpolation, stateToInterpolateTo);
+			instruction.TimeToExecute = FlatRedBall.TimeManager.CurrentTime + secondsToTake;
+			this.Instructions.Add(instruction);
+			return instruction;
+		}
+		public void StopStateInterpolation (VariableState stateToStop)
+		{
+			switch(stateToStop)
+			{
+				case  VariableState.spawning:
+					Sprite.BlueRate =  0;
+					Sprite.GreenRate =  0;
+					Sprite.RedRate =  0;
+					break;
+				case  VariableState.speeding:
+					Sprite.BlueRate =  0;
+					Sprite.GreenRate =  0;
+					Sprite.RedRate =  0;
+					break;
+			}
+			CurrentState = stateToStop;
+		}
+		public void InterpolateBetween (VariableState firstState, VariableState secondState, float interpolationValue)
+		{
+			#if DEBUG
+			if (float.IsNaN(interpolationValue))
+			{
+				throw new Exception("interpolationValue cannot be NaN");
+			}
+			#endif
+			bool setmovementSpeed = true;
+			float movementSpeedFirstValue= 0;
+			float movementSpeedSecondValue= 0;
+			bool setpointsWorth = true;
+			int pointsWorthFirstValue= 0;
+			int pointsWorthSecondValue= 0;
+			bool setSpriteBlue = true;
+			float SpriteBlueFirstValue= 0;
+			float SpriteBlueSecondValue= 0;
+			bool setSpriteGreen = true;
+			float SpriteGreenFirstValue= 0;
+			float SpriteGreenSecondValue= 0;
+			bool setSpriteRed = true;
+			float SpriteRedFirstValue= 0;
+			float SpriteRedSecondValue= 0;
+			switch(firstState)
+			{
+				case  VariableState.spawning:
+					movementSpeedFirstValue = 0f;
+					pointsWorthFirstValue = 0;
+					SpriteBlueFirstValue = 1f;
+					SpriteGreenFirstValue = 1f;
+					SpriteRedFirstValue = 1f;
+					if (interpolationValue < 1)
+					{
+						this.SpriteColorOperation = FlatRedBall.Graphics.ColorOperation.ColorTextureAlpha;
+					}
+					break;
+				case  VariableState.speeding:
+					movementSpeedFirstValue = 250f;
+					pointsWorthFirstValue = 1;
+					SpriteBlueFirstValue = 0f;
+					SpriteGreenFirstValue = 0f;
+					SpriteRedFirstValue = 1f;
+					if (interpolationValue < 1)
+					{
+						this.SpriteColorOperation = FlatRedBall.Graphics.ColorOperation.ColorTextureAlpha;
+					}
+					break;
+			}
+			switch(secondState)
+			{
+				case  VariableState.spawning:
+					movementSpeedSecondValue = 0f;
+					pointsWorthSecondValue = 0;
+					SpriteBlueSecondValue = 1f;
+					SpriteGreenSecondValue = 1f;
+					SpriteRedSecondValue = 1f;
+					if (interpolationValue >= 1)
+					{
+						this.SpriteColorOperation = FlatRedBall.Graphics.ColorOperation.ColorTextureAlpha;
+					}
+					break;
+				case  VariableState.speeding:
+					movementSpeedSecondValue = 250f;
+					pointsWorthSecondValue = 1;
+					SpriteBlueSecondValue = 0f;
+					SpriteGreenSecondValue = 0f;
+					SpriteRedSecondValue = 1f;
+					if (interpolationValue >= 1)
+					{
+						this.SpriteColorOperation = FlatRedBall.Graphics.ColorOperation.ColorTextureAlpha;
+					}
+					break;
+			}
+			if (setmovementSpeed)
+			{
+				movementSpeed = movementSpeedFirstValue * (1 - interpolationValue) + movementSpeedSecondValue * interpolationValue;
+			}
+			if (setpointsWorth)
+			{
+				pointsWorth = FlatRedBall.Math.MathFunctions.RoundToInt(pointsWorthFirstValue* (1 - interpolationValue) + pointsWorthSecondValue * interpolationValue);
+			}
+			if (setSpriteBlue)
+			{
+				SpriteBlue = SpriteBlueFirstValue * (1 - interpolationValue) + SpriteBlueSecondValue * interpolationValue;
+			}
+			if (setSpriteGreen)
+			{
+				SpriteGreen = SpriteGreenFirstValue * (1 - interpolationValue) + SpriteGreenSecondValue * interpolationValue;
+			}
+			if (setSpriteRed)
+			{
+				SpriteRed = SpriteRedFirstValue * (1 - interpolationValue) + SpriteRedSecondValue * interpolationValue;
+			}
+			if (interpolationValue < 1)
+			{
+				mCurrentState = (int)firstState;
+			}
+			else
+			{
+				mCurrentState = (int)secondState;
+			}
+		}
+		public static void PreloadStateContent (VariableState state, string contentManagerName)
+		{
+			ContentManagerName = contentManagerName;
+			switch(state)
+			{
+				case  VariableState.spawning:
+					break;
+				case  VariableState.speeding:
+					break;
 			}
 		}
 		[System.Obsolete("Use GetFile instead")]

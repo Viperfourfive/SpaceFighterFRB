@@ -84,8 +84,9 @@ namespace SpaceFighterFRB.Screens
         private void UpdateHUD()
         {
             this.gameHUDInstance.enemyTypeDisplayText = GlobalData.EnemyData.enemyType;
-            this.gameHUDInstance.enemiesAliveDisplayText = GlobalData.EnemyData.enemiesAlive;
+            this.gameHUDInstance.enemiesAliveDisplayText = GlobalData.EnemyData.enemiesKilled;
             this.gameHUDInstance.enemiesSpawnedDisplayText = GlobalData.EnemyData.enemiesSpawned;
+            this.gameHUDInstance.waveCounterDisplayText = GlobalData.EnemyData.waveCounter;
 
         }
         private void Collisions()
@@ -104,7 +105,7 @@ namespace SpaceFighterFRB.Screens
             //BulletVsPlayer();
 
         }
-        private void BoundsCollision()
+        private void BoundsCollision() //combine these lists for optimization?
         {
             for (int i = bulletList.Count - 1; i > -1; i--)
             {
@@ -130,6 +131,7 @@ namespace SpaceFighterFRB.Screens
                 if (_speeder.CollisionMesh.CollideAgainst(gameScreenCollisionMesh))
                 {
                     _speeder.Destroy();
+                    GlobalData.EnemyData.enemiesKilled++;
                 }
             }
 
@@ -151,7 +153,7 @@ namespace SpaceFighterFRB.Screens
                         GlobalData.PlayerData.score += _enemyShip.pointsWorth;
                         this.gameHUDInstance.scoreDisplayText = GlobalData.PlayerData.score;
 
-                        GlobalData.EnemyData.enemiesAlive++; 
+                        GlobalData.EnemyData.enemiesKilled++; 
 
                         break;
                     }
@@ -170,7 +172,7 @@ namespace SpaceFighterFRB.Screens
                 {
                     _playerShip.HP--;
                     _enemyShip.Destroy();
-                    GlobalData.EnemyData.enemiesAlive++;
+                    GlobalData.EnemyData.enemiesKilled++;
                     break;
                 }
             }
