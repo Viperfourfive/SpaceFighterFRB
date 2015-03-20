@@ -1,7 +1,7 @@
 # SpaceFighterFRB
 
-A Geometry Wars like clone.  I'm using this project to familiaze myself with the FlatRedBall framework, XNA 4.0, and C#.
+A Geometry Wars like clone.  I'm using this project to familiaze myself with the FlatRedBall framework, XNA 4.0, and C#.  Feel free to fork and play or fork and make your own changes :)
 
-Feel free to fork and play or fork and make your own changes :)
-
-Currently, the only (working) input mapped is to a Xbox 360 controller.
+Input mapped is to a Xbox 360 controller or keyboard.  
+XBox360: Left stick to move & Right stick to shoot.
+Keyboard: WASD to move & Arrow keys to shoot.
