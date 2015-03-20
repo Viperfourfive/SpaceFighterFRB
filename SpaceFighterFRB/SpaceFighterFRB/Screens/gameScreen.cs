@@ -96,18 +96,18 @@ namespace SpaceFighterFRB.Screens
             if (playerShipList.Count > 0)
             {
                 playerShipList[0].CollisionMesh.CollideAgainstBounce(gameScreenCollisionMesh, 0, 10, 10);
-                EnemyVsPlayer();
+                CollisionEnemiesVsPlayer();
             }            
-            BoundsCollision();
-            BulletVsEnemy();
-            //EnemyVsEnemy(); //ToDo: performance decrease on high object counts.  Correct by adding waves
-                   //in lieu of static spawn rates or partitioning enemies into multiple lists.
+            CollisionBounds();
+            CollisionEnemiesVsBullet();
+            CollisionEnemiesVsEnemy(); //ToDo: performance decrease on high object counts.  Correct by adding waves
+                   //in lieu of static spawn rates or add partitioning of enemies into multiple lists.
             
             //ToDo: add when adding enemies that shoot
-            //BulletVsPlayer();
+            //CollisionBulletsVsPlayer();
 
         }
-        private void BoundsCollision() //combine these lists for optimization?
+        private void CollisionBounds()
         {
             for (int i = bulletList.Count - 1; i > -1; i--)
             {
@@ -130,16 +130,16 @@ namespace SpaceFighterFRB.Screens
             for (int k = speederList.Count - 1; k > -1; k--)
             {
                 speeder _speeder = speederList[k];
-                if (_speeder.CollisionMesh.CollideAgainst(gameScreenCollisionMesh))
-                {
-                    _speeder.Destroy();
-                    GlobalData.EnemyData.enemiesKilled++;
-                }
+                _speeder.CollisionMesh.CollideAgainstBounce(gameScreenCollisionMesh, 0, 1, 1);
+                //{
+                //    _speeder.Destroy();
+                //    GlobalData.EnemyData.enemiesKilled++;
+                //}
             }
 
         }
 
-        private void BulletVsEnemy()
+        private void CollisionEnemiesVsBullet()
         {
             for (int i = bulletList.Count - 1; i > -1; i--)
             {
@@ -160,10 +160,27 @@ namespace SpaceFighterFRB.Screens
                         break;
                     }
                 }
+                for (int j = speederList.Count - 1; j > -1; j--)
+                {
+                    speeder _speeder = speederList[j];
+                    if (_speeder.CollisionMesh.CollideAgainst(_bullet.CollisionMesh))
+                    {
+                        _bullet.Destroy();
+                        _speeder.Destroy();
+
+                        GlobalData.PlayerData.score += _speeder.pointsWorth;
+                        this.gameHUDInstance.scoreDisplayText = GlobalData.PlayerData.score;
+
+                        GlobalData.EnemyData.enemiesKilled++;
+
+                        break;
+                    }
+                }
             }
+
         }
 
-        private void EnemyVsPlayer()
+        private void CollisionEnemiesVsPlayer()
         {
             for (int i = enemyShipList.Count - 1; i > -1; i--)
             {
@@ -178,9 +195,22 @@ namespace SpaceFighterFRB.Screens
                     break;
                 }
             }
+            for (int i = speederList.Count - 1; i > -1; i--)
+            {
+                speeder _speeder = speederList[i];
+                playerShip _playerShip = playerShipList[0];
+
+                if (_speeder.CollisionMesh.CollideAgainst(_playerShip.CollisionMesh))
+                {
+                    _playerShip.HP--;
+                    _speeder.Destroy();
+                    GlobalData.EnemyData.enemiesKilled++;
+                    break;
+                }
+            }
         }
 
-        private void EnemyVsEnemy()
+        private void CollisionEnemiesVsEnemy()
         {
             for (int i = enemyShipList.Count - 1; i > -1; i--)
             {
@@ -191,7 +221,20 @@ namespace SpaceFighterFRB.Screens
                     {
                         enemyShip _enemyShip2 = enemyShipList[j];
                         /*bounce each other*/
-                        _enemyShip1.CollisionMesh.CollideAgainstMove(_enemyShip2.CollisionMesh, 10, 10);
+                        _enemyShip1.CollisionMesh.CollideAgainstMove(_enemyShip2.CollisionMesh, 1, 1);
+                    }
+                }
+            }
+            for (int i = speederList.Count - 1; i > -1; i--)
+            {
+                speeder _speeder1 = speederList[i];
+                for (int j = speederList.Count - 1; j > -1; j--)
+                {
+                    if (j != i)
+                    {
+                        speeder _speeder2 = speederList[j];
+                        /*bounce each other*/
+                        _speeder1.CollisionMesh.CollideAgainstBounce(_speeder2.CollisionMesh, 1, 1, 1);
                     }
                 }
             }
