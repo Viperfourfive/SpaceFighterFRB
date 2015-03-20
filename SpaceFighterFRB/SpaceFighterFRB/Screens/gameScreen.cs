@@ -47,9 +47,11 @@ namespace SpaceFighterFRB.Screens
                 buttonMap.LeftAnalogDown = Keys.S;
                 buttonMap.LeftAnalogRight = Keys.D;
 
+                buttonMap.RightAnalogUp = Keys.Up;
                 buttonMap.RightAnalogLeft = Keys.Left;
+                buttonMap.RightAnalogDown = Keys.Down;
                 buttonMap.RightAnalogRight = Keys.Right;
-
+                    
                 //var rightStickPostion = new Vector3(mouseMap.X, mouseMap.Y, 0);
                 //buttonMap.RightAnalogLeft = rightStick.X;
                 //buttonMap.RightAnalogUp = rightStick.Y;                
