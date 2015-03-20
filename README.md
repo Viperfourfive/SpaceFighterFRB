@@ -4,4 +4,5 @@ A Geometry Wars like clone.  I'm using this project to familiaze myself with the
 
 Input mapped is to a Xbox 360 controller or keyboard.  
 XBox360: Left stick to move & Right stick to shoot.
+
 Keyboard: WASD to move & Arrow keys to shoot.
