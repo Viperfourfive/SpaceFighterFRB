@@ -20,10 +20,17 @@ namespace SpaceFighterFRB
             private set;
         }
 
+        public static MenuData MenuData
+        {
+            get;
+            private set;
+        }
+
         public static void Initialize()
         {
             PlayerData = new PlayerData();
             EnemyData = new EnemyData();
+            MenuData = new MenuData();
         }
     }
 }

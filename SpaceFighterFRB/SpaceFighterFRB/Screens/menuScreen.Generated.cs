@@ -41,6 +41,10 @@ namespace SpaceFighterFRB.Screens
 		static bool HasBeenLoadedWithGlobalContentManager = false;
 		#endif
 		
+		private SpaceFighterFRB.Entities.menuHUD menuHUDInstance;
+		private SpaceFighterFRB.Entities.menuCursor cursorInstance;
+		private SpaceFighterFRB.Entities.menuPlayBox menuPlayBoxInstance;
+		private SpaceFighterFRB.Entities.menuExitBox menuExitBoxInstance;
 
 		public menuScreen()
 			: base("menuScreen")
@@ -51,6 +55,14 @@ namespace SpaceFighterFRB.Screens
         {
 			// Generated Initialize
 			LoadStaticContent(ContentManagerName);
+			menuHUDInstance = new SpaceFighterFRB.Entities.menuHUD(ContentManagerName, false);
+			menuHUDInstance.Name = "menuHUDInstance";
+			cursorInstance = new SpaceFighterFRB.Entities.menuCursor(ContentManagerName, false);
+			cursorInstance.Name = "cursorInstance";
+			menuPlayBoxInstance = new SpaceFighterFRB.Entities.menuPlayBox(ContentManagerName, false);
+			menuPlayBoxInstance.Name = "menuPlayBoxInstance";
+			menuExitBoxInstance = new SpaceFighterFRB.Entities.menuExitBox(ContentManagerName, false);
+			menuExitBoxInstance.Name = "menuExitBoxInstance";
 			
 			
 			PostInitialize();
@@ -65,6 +77,10 @@ namespace SpaceFighterFRB.Screens
 // Generated AddToManagers
 		public override void AddToManagers ()
 		{
+			menuHUDInstance.AddToManagers(mLayer);
+			cursorInstance.AddToManagers(mLayer);
+			menuPlayBoxInstance.AddToManagers(mLayer);
+			menuExitBoxInstance.AddToManagers(mLayer);
 			base.AddToManagers();
 			AddToManagersBottomUp();
 			CustomInitialize();
@@ -77,6 +93,10 @@ namespace SpaceFighterFRB.Screens
 			if (!IsPaused)
 			{
 				
+				menuHUDInstance.Activity();
+				cursorInstance.Activity();
+				menuPlayBoxInstance.Activity();
+				menuExitBoxInstance.Activity();
 			}
 			else
 			{
@@ -97,6 +117,26 @@ namespace SpaceFighterFRB.Screens
 		{
 			// Generated Destroy
 			
+			if (menuHUDInstance != null)
+			{
+				menuHUDInstance.Destroy();
+				menuHUDInstance.Detach();
+			}
+			if (cursorInstance != null)
+			{
+				cursorInstance.Destroy();
+				cursorInstance.Detach();
+			}
+			if (menuPlayBoxInstance != null)
+			{
+				menuPlayBoxInstance.Destroy();
+				menuPlayBoxInstance.Detach();
+			}
+			if (menuExitBoxInstance != null)
+			{
+				menuExitBoxInstance.Destroy();
+				menuExitBoxInstance.Detach();
+			}
 
 			base.Destroy();
 
@@ -109,6 +149,22 @@ namespace SpaceFighterFRB.Screens
 		{
 			bool oldShapeManagerSuppressAdd = FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue;
 			FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = true;
+			if (cursorInstance.Parent == null)
+			{
+				cursorInstance.X = -35f;
+			}
+			else
+			{
+				cursorInstance.RelativeX = -35f;
+			}
+			if (cursorInstance.Parent == null)
+			{
+				cursorInstance.Y = 60f;
+			}
+			else
+			{
+				cursorInstance.RelativeY = 60f;
+			}
 			FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = oldShapeManagerSuppressAdd;
 		}
 		public virtual void AddToManagersBottomUp ()
@@ -118,15 +174,43 @@ namespace SpaceFighterFRB.Screens
 		}
 		public virtual void RemoveFromManagers ()
 		{
+			menuHUDInstance.RemoveFromManagers();
+			cursorInstance.RemoveFromManagers();
+			menuPlayBoxInstance.RemoveFromManagers();
+			menuExitBoxInstance.RemoveFromManagers();
 		}
 		public virtual void AssignCustomVariables (bool callOnContainedElements)
 		{
 			if (callOnContainedElements)
 			{
+				menuHUDInstance.AssignCustomVariables(true);
+				cursorInstance.AssignCustomVariables(true);
+				menuPlayBoxInstance.AssignCustomVariables(true);
+				menuExitBoxInstance.AssignCustomVariables(true);
+			}
+			if (cursorInstance.Parent == null)
+			{
+				cursorInstance.X = -35f;
+			}
+			else
+			{
+				cursorInstance.RelativeX = -35f;
+			}
+			if (cursorInstance.Parent == null)
+			{
+				cursorInstance.Y = 60f;
+			}
+			else
+			{
+				cursorInstance.RelativeY = 60f;
 			}
 		}
 		public virtual void ConvertToManuallyUpdated ()
 		{
+			menuHUDInstance.ConvertToManuallyUpdated();
+			cursorInstance.ConvertToManuallyUpdated();
+			menuPlayBoxInstance.ConvertToManuallyUpdated();
+			menuExitBoxInstance.ConvertToManuallyUpdated();
 		}
 		public static void LoadStaticContent (string contentManagerName)
 		{
@@ -144,6 +228,10 @@ namespace SpaceFighterFRB.Screens
 				throw new Exception("This type has been loaded with a Global content manager, then loaded with a non-global.  This can lead to a lot of bugs");
 			}
 			#endif
+			SpaceFighterFRB.Entities.menuHUD.LoadStaticContent(contentManagerName);
+			SpaceFighterFRB.Entities.menuCursor.LoadStaticContent(contentManagerName);
+			SpaceFighterFRB.Entities.menuPlayBox.LoadStaticContent(contentManagerName);
+			SpaceFighterFRB.Entities.menuExitBox.LoadStaticContent(contentManagerName);
 			CustomLoadStaticContent(contentManagerName);
 		}
 		[System.Obsolete("Use GetFile instead")]

@@ -71,8 +71,6 @@ namespace SpaceFighterFRB.Entities
         void UpdateHealthBarInstance()
         {
             healthBarInstance.PlayerShip = mplayerShipList[0];
-            //healthBarInstance.Position.X = -650;
-            //healthBarInstance.Position.Y = 100;
         }
     }
 }

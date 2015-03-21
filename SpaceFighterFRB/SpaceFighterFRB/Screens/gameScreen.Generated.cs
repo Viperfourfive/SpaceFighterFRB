@@ -50,6 +50,7 @@ namespace SpaceFighterFRB.Screens
 		private SpaceFighterFRB.Entities.enemySpawner enemySpawnerInstance;
 		private PositionedObjectList<SpaceFighterFRB.Entities.playerShip> playerShipList;
 		private PositionedObjectList<SpaceFighterFRB.Entities.speeder> speederList;
+		private SpaceFighterFRB.Entities.gameOverHUD gameOverHUDInstance;
 
 		public gameScreen()
 			: base("gameScreen")
@@ -72,6 +73,8 @@ namespace SpaceFighterFRB.Screens
 			playerShipList.Name = "playerShipList";
 			speederList = new PositionedObjectList<SpaceFighterFRB.Entities.speeder>();
 			speederList.Name = "speederList";
+			gameOverHUDInstance = new SpaceFighterFRB.Entities.gameOverHUD(ContentManagerName, false);
+			gameOverHUDInstance.Name = "gameOverHUDInstance";
 			
 			
 			PostInitialize();
@@ -92,6 +95,7 @@ namespace SpaceFighterFRB.Screens
 			speederFactory.Initialize(speederList, ContentManagerName);
 			gameHUDInstance.AddToManagers(mLayer);
 			enemySpawnerInstance.AddToManagers(mLayer);
+			gameOverHUDInstance.AddToManagers(mLayer);
 			base.AddToManagers();
 			AddToManagersBottomUp();
 			CustomInitialize();
@@ -138,6 +142,7 @@ namespace SpaceFighterFRB.Screens
 						speederList[i].Activity();
 					}
 				}
+				gameOverHUDInstance.Activity();
 			}
 			else
 			{
@@ -207,6 +212,11 @@ namespace SpaceFighterFRB.Screens
 			{
 				speederList[i].Destroy();
 			}
+			if (gameOverHUDInstance != null)
+			{
+				gameOverHUDInstance.Destroy();
+				gameOverHUDInstance.Detach();
+			}
 			bulletList.MakeTwoWay();
 			enemyShipList.MakeTwoWay();
 			playerShipList.MakeTwoWay();
@@ -223,6 +233,7 @@ namespace SpaceFighterFRB.Screens
 		{
 			bool oldShapeManagerSuppressAdd = FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue;
 			FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = true;
+			gameOverHUDInstance.Visible = false;
 			FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = oldShapeManagerSuppressAdd;
 		}
 		public virtual void AddToManagersBottomUp ()
@@ -250,6 +261,7 @@ namespace SpaceFighterFRB.Screens
 			{
 				speederList[i].Destroy();
 			}
+			gameOverHUDInstance.RemoveFromManagers();
 		}
 		public virtual void AssignCustomVariables (bool callOnContainedElements)
 		{
@@ -257,7 +269,9 @@ namespace SpaceFighterFRB.Screens
 			{
 				gameHUDInstance.AssignCustomVariables(true);
 				enemySpawnerInstance.AssignCustomVariables(true);
+				gameOverHUDInstance.AssignCustomVariables(true);
 			}
+			gameOverHUDInstance.Visible = false;
 		}
 		public virtual void ConvertToManuallyUpdated ()
 		{
@@ -279,6 +293,7 @@ namespace SpaceFighterFRB.Screens
 			{
 				speederList[i].ConvertToManuallyUpdated();
 			}
+			gameOverHUDInstance.ConvertToManuallyUpdated();
 		}
 		public static void LoadStaticContent (string contentManagerName)
 		{
@@ -302,6 +317,7 @@ namespace SpaceFighterFRB.Screens
 			gameScreenCollisionMesh = FlatRedBallServices.Load<FlatRedBall.Math.Geometry.ShapeCollection>(@"content/screens/gamescreen/gamescreencollisionmesh.shcx", contentManagerName);
 			SpaceFighterFRB.Entities.gameHUD.LoadStaticContent(contentManagerName);
 			SpaceFighterFRB.Entities.enemySpawner.LoadStaticContent(contentManagerName);
+			SpaceFighterFRB.Entities.gameOverHUD.LoadStaticContent(contentManagerName);
 			CustomLoadStaticContent(contentManagerName);
 		}
 		[System.Obsolete("Use GetFile instead")]

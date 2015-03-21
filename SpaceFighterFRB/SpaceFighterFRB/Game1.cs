@@ -51,7 +51,7 @@ namespace SpaceFighterFRB
 			GlobalContent.Initialize();
 
             GlobalData.Initialize();
-			FlatRedBall.Screens.ScreenManager.Start(typeof(SpaceFighterFRB.Screens.gameScreen));
+			FlatRedBall.Screens.ScreenManager.Start(typeof(SpaceFighterFRB.Screens.menuScreen));
 
             base.Initialize();
         }

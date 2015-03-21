@@ -41,12 +41,13 @@ namespace SpaceFighterFRB.Screens
                 KeyboardButtonMap buttonMap = new KeyboardButtonMap();
                 //MouseState mouseMap = new MouseState();
 
-                // Here's how we'd assign the left and right:
+                //Movement:
                 buttonMap.LeftAnalogUp = Keys.W;
                 buttonMap.LeftAnalogLeft = Keys.A;
                 buttonMap.LeftAnalogDown = Keys.S;
                 buttonMap.LeftAnalogRight = Keys.D;
 
+                //Shoot:
                 buttonMap.RightAnalogUp = Keys.Up;
                 buttonMap.RightAnalogLeft = Keys.Left;
                 buttonMap.RightAnalogDown = Keys.Down;
@@ -56,19 +57,24 @@ namespace SpaceFighterFRB.Screens
                 //buttonMap.RightAnalogLeft = rightStick.X;
                 //buttonMap.RightAnalogUp = rightStick.Y;                
 
-                // Continue assigning the keys you want to use here:
+                //Menu navigation and Exit:
                 buttonMap.A = Keys.Space;
+                buttonMap.Back = Keys.Escape;
 
                 // And now tell the 1st controller to use this button map
                 InputManager.Xbox360GamePads[0].ButtonMap = buttonMap;
             }
+            GlobalData.MenuData.exit = false;
         }
 
 		void CustomActivity(bool firstTimeCalled)
 		{
-            Collisions();
+            DetectManualExit();
+            DetectCollisions();
+            ActivateSpeeders();
             FindAngleToPlayer();
             UpdateHUD();
+            DetectEndOfGame();
             	
         }
 
@@ -91,17 +97,17 @@ namespace SpaceFighterFRB.Screens
             this.gameHUDInstance.waveCounterDisplayText = GlobalData.EnemyData.waveCounter;
 
         }
-        private void Collisions()
+        private void DetectCollisions()
         {
             if (playerShipList.Count > 0)
             {
                 playerShipList[0].CollisionMesh.CollideAgainstBounce(gameScreenCollisionMesh, 0, 10, 10);
                 CollisionEnemiesVsPlayer();
-            }            
+            }
             CollisionBounds();
             CollisionEnemiesVsBullet();
-            CollisionEnemiesVsEnemy(); //ToDo: performance decrease on high object counts.  Correct by adding waves
-                   //in lieu of static spawn rates or add partitioning of enemies into multiple lists.
+            CollisionEnemiesVsEnemy(); /*ToDo: performance decrease on high object counts.  Correct by adding waves
+                   in lieu of static spawn rates or add partitioning of enemies into multiple lists.*/
             
             //ToDo: add when adding enemies that shoot
             //CollisionBulletsVsPlayer();
@@ -131,12 +137,7 @@ namespace SpaceFighterFRB.Screens
             {
                 speeder _speeder = speederList[k];
                 _speeder.CollisionMesh.CollideAgainstBounce(gameScreenCollisionMesh, 0, 1, 1);
-                //{
-                //    _speeder.Destroy();
-                //    GlobalData.EnemyData.enemiesKilled++;
-                //}
             }
-
         }
 
         private void CollisionEnemiesVsBullet()
@@ -167,7 +168,7 @@ namespace SpaceFighterFRB.Screens
                     {
                         _bullet.Destroy();
                         _speeder.Destroy();
-
+                        
                         GlobalData.PlayerData.score += _speeder.pointsWorth;
                         this.gameHUDInstance.scoreDisplayText = GlobalData.PlayerData.score;
 
@@ -212,19 +213,20 @@ namespace SpaceFighterFRB.Screens
 
         private void CollisionEnemiesVsEnemy()
         {
-            for (int i = enemyShipList.Count - 1; i > -1; i--)
-            {
-                enemyShip _enemyShip1 = enemyShipList[i];
-                for (int j = enemyShipList.Count - 1; j > -1; j--)
-                {
-                    if (j != i)
-                    {
-                        enemyShip _enemyShip2 = enemyShipList[j];
-                        /*bounce each other*/
-                        _enemyShip1.CollisionMesh.CollideAgainstMove(_enemyShip2.CollisionMesh, 1, 1);
-                    }
-                }
-            }
+            /*For now I like this wave of enemies stacking on top of one another.*/
+            //for (int i = enemyShipList.Count - 1; i > -1; i--)
+            //{
+            //    enemyShip _enemyShip1 = enemyShipList[i];
+            //    for (int j = enemyShipList.Count - 1; j > -1; j--)
+            //    {
+            //        if (j != i)
+            //        {
+            //            enemyShip _enemyShip2 = enemyShipList[j];
+            //            /*bounce each other*/
+            //            _enemyShip1.CollisionMesh.CollideAgainstMove(_enemyShip2.CollisionMesh, 1, 1);
+            //        }
+            //    }
+            //}
             for (int i = speederList.Count - 1; i > -1; i--)
             {
                 speeder _speeder1 = speederList[i];
@@ -263,10 +265,43 @@ namespace SpaceFighterFRB.Screens
             }
         }
 
+        private void ActivateSpeeders()
+        {
+            for (int i = 0; i < speederList.Count; i++)
+            {
+                speeder _speeder = speederList[i];
+
+                if (TimeManager.CurrentTime - _speeder.spawnTime >= 1)
+                {
+                    var direction = _speeder.Velocity;
+                    direction.Normalize();
+                    _speeder.CurrentState = speeder.VariableState.speeding;
+                    _speeder.Velocity = direction * _speeder.movementSpeed;
+                    _speeder.spawnTime = 0;  //Naive??  This forces it to only run once.
+                }
+            }
+        }
+
         private void CreatePlayer()
         {
             playerShip _playerShip = new playerShip(ContentManagerName);
             playerShipList.Add(_playerShip);
+        }
+        
+        void DetectEndOfGame()
+        {
+            if(gameOverHUDInstance.Visible == false && this.playerShipList.Count == 0)
+            {
+                gameOverHUDInstance.Visible = true;
+            }
+        }
+
+        void DetectManualExit()
+        {
+            if (GlobalData.MenuData.exit == true)
+            {
+                FlatRedBallServices.Game.Exit();
+            }
         }
 	}
 }

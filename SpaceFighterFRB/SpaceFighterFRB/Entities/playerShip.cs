@@ -61,6 +61,7 @@ namespace SpaceFighterFRB.Entities
 
 		private void CustomActivity()
 		{
+            DetectManualExit();
             Move();
 
 		}
@@ -109,6 +110,12 @@ namespace SpaceFighterFRB.Entities
                 _b.Velocity = this.RotationMatrix.Up * _b.movementSpeed;
         }
 
-
+        void DetectManualExit()
+        {
+            if (mGamePad.ButtonDown(Xbox360GamePad.Button.Back))
+            {
+                GlobalData.MenuData.exit = true;
+            }
+        }
 	}
 }

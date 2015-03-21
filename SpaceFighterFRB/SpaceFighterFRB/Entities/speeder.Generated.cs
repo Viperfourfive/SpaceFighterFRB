@@ -84,7 +84,7 @@ namespace SpaceFighterFRB.Entities
 					case  VariableState.Unknown:
 						break;
 					case  VariableState.spawning:
-						movementSpeed = 0f;
+						movementSpeed = 1f;
 						pointsWorth = 0;
 						SpriteBlue = 1f;
 						SpriteGreen = 1f;
@@ -120,8 +120,8 @@ namespace SpaceFighterFRB.Entities
 				mCollisionMesh = value;
 			}
 		}
-		public float movementSpeed = 500f;
-		public int pointsWorth = 1;
+		public float movementSpeed;
+		public int pointsWorth;
 		public float SpriteBlue
 		{
 			get
@@ -166,6 +166,7 @@ namespace SpaceFighterFRB.Entities
 				Sprite.ColorOperation = value;
 			}
 		}
+		public System.Double spawnTime;
 		public int Index { get; set; }
 		public bool Used { get; set; }
 		private FlatRedBall.Math.Geometry.ShapeCollection mGeneratedCollision;
@@ -328,12 +329,6 @@ namespace SpaceFighterFRB.Entities
 			{
 				mCollisionMesh.RelativeX = 0f;
 			}
-			movementSpeed = 500f;
-			pointsWorth = 1;
-			SpriteBlue = 0f;
-			SpriteGreen = 0f;
-			SpriteRed = 0f;
-			SpriteColorOperation = FlatRedBall.Graphics.ColorOperation.ColorTextureAlpha;
 		}
 		public virtual void ConvertToManuallyUpdated ()
 		{
@@ -479,7 +474,7 @@ namespace SpaceFighterFRB.Entities
 			switch(firstState)
 			{
 				case  VariableState.spawning:
-					movementSpeedFirstValue = 0f;
+					movementSpeedFirstValue = 1f;
 					pointsWorthFirstValue = 0;
 					SpriteBlueFirstValue = 1f;
 					SpriteGreenFirstValue = 1f;
@@ -504,7 +499,7 @@ namespace SpaceFighterFRB.Entities
 			switch(secondState)
 			{
 				case  VariableState.spawning:
-					movementSpeedSecondValue = 0f;
+					movementSpeedSecondValue = 1f;
 					pointsWorthSecondValue = 0;
 					SpriteBlueSecondValue = 1f;
 					SpriteGreenSecondValue = 1f;

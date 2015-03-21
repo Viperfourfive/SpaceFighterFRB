@@ -29,18 +29,41 @@ namespace SpaceFighterFRB.Screens
 {
 	public partial class menuScreen
 	{
-
-		void CustomInitialize()
+        void CustomInitialize()
 		{
+            if (FlatRedBall.Input.InputManager.Xbox360GamePads[0].IsConnected == false)
+            {
+                KeyboardButtonMap buttonMap = new KeyboardButtonMap();
 
+                // Here's how we'd assign the left and right:
+                buttonMap.LeftAnalogUp = Keys.Up;
+                buttonMap.LeftAnalogDown = Keys.Down;
+                buttonMap.A = Keys.Enter;
 
-		}
+                // Continue assigning the keys you want to use here:
 
-		void CustomActivity(bool firstTimeCalled)
-		{
+                // And now tell the 1st controller to use this button map
+                InputManager.Xbox360GamePads[0].ButtonMap = buttonMap;
+            }
 
+            GlobalData.MenuData.exit = false;
+            GlobalData.MenuData.play = false;
+        }
 
-		}
+        void CustomActivity(bool firstTimeCalled)
+        {
+            //ToDo: Add Menu Music
+
+            if (GlobalData.MenuData.play)
+            {
+                this.MoveToScreen(typeof(gameScreen).FullName);
+            }
+            if (GlobalData.MenuData.exit)
+            {
+                FlatRedBallServices.Game.Exit();
+            }
+
+        }
 
 		void CustomDestroy()
 		{
@@ -53,6 +76,5 @@ namespace SpaceFighterFRB.Screens
 
 
         }
-
 	}
 }
