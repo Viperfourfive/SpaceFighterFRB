@@ -86,13 +86,13 @@ namespace SpaceFighterFRB.Entities
 					case  VariableState.spawning:
 						movementSpeed = 1f;
 						pointsWorth = 0;
-						SpriteBlue = 1f;
-						SpriteGreen = 1f;
-						SpriteRed = 1f;
+						SpriteBlue = 0.565f;
+						SpriteGreen = 0.933f;
+						SpriteRed = 0.565f;
 						SpriteColorOperation = FlatRedBall.Graphics.ColorOperation.ColorTextureAlpha;
 						break;
 					case  VariableState.speeding:
-						movementSpeed = 250f;
+						movementSpeed = 200f;
 						pointsWorth = 1;
 						SpriteBlue = 0f;
 						SpriteGreen = 0f;
@@ -106,6 +106,7 @@ namespace SpaceFighterFRB.Entities
 		static List<string> mRegisteredUnloads = new List<string>();
 		static List<string> LoadedContentManagers = new List<string>();
 		protected static Microsoft.Xna.Framework.Graphics.Texture2D enemyShip2;
+		protected static Microsoft.Xna.Framework.Graphics.Texture2D enemyShip2b;
 		
 		private FlatRedBall.Sprite Sprite;
 		private FlatRedBall.Math.Geometry.Circle mCollisionMesh;
@@ -279,14 +280,14 @@ namespace SpaceFighterFRB.Entities
 				Sprite.CopyAbsoluteToRelative();
 				Sprite.AttachTo(this, false);
 			}
-			Sprite.Texture = enemyShip2;
-			Sprite.TextureScale = 0.45f;
+			Sprite.Texture = enemyShip2b;
+			Sprite.TextureScale = 0.55f;
 			if (mCollisionMesh.Parent == null)
 			{
 				mCollisionMesh.CopyAbsoluteToRelative();
 				mCollisionMesh.AttachTo(this, false);
 			}
-			CollisionMesh.Radius = 7f;
+			CollisionMesh.Radius = 8.75f;
 			if (CollisionMesh.Parent == null)
 			{
 				CollisionMesh.X = 0f;
@@ -295,6 +296,7 @@ namespace SpaceFighterFRB.Entities
 			{
 				CollisionMesh.RelativeX = 0f;
 			}
+			CollisionMesh.Visible = false;
 			FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = oldShapeManagerSuppressAdd;
 		}
 		public virtual void AddToManagersBottomUp (Layer layerToAddTo)
@@ -318,9 +320,9 @@ namespace SpaceFighterFRB.Entities
 			if (callOnContainedElements)
 			{
 			}
-			Sprite.Texture = enemyShip2;
-			Sprite.TextureScale = 0.45f;
-			mCollisionMesh.Radius = 7f;
+			Sprite.Texture = enemyShip2b;
+			Sprite.TextureScale = 0.55f;
+			mCollisionMesh.Radius = 8.75f;
 			if (mCollisionMesh.Parent == null)
 			{
 				mCollisionMesh.X = 0f;
@@ -329,6 +331,7 @@ namespace SpaceFighterFRB.Entities
 			{
 				mCollisionMesh.RelativeX = 0f;
 			}
+			mCollisionMesh.Visible = false;
 		}
 		public virtual void ConvertToManuallyUpdated ()
 		{
@@ -370,6 +373,11 @@ namespace SpaceFighterFRB.Entities
 					registerUnload = true;
 				}
 				enemyShip2 = FlatRedBallServices.Load<Microsoft.Xna.Framework.Graphics.Texture2D>(@"content/entities/speeder/enemyship2.png", ContentManagerName);
+				if (!FlatRedBallServices.IsLoaded<Microsoft.Xna.Framework.Graphics.Texture2D>(@"content/entities/speeder/enemyship2b.png", ContentManagerName))
+				{
+					registerUnload = true;
+				}
+				enemyShip2b = FlatRedBallServices.Load<Microsoft.Xna.Framework.Graphics.Texture2D>(@"content/entities/speeder/enemyship2b.png", ContentManagerName);
 			}
 			if (registerUnload && ContentManagerName != FlatRedBallServices.GlobalContentManager)
 			{
@@ -397,6 +405,10 @@ namespace SpaceFighterFRB.Entities
 				{
 					enemyShip2= null;
 				}
+				if (enemyShip2b != null)
+				{
+					enemyShip2b= null;
+				}
 			}
 		}
 		static VariableState mLoadingState = VariableState.Uninitialized;
@@ -416,9 +428,9 @@ namespace SpaceFighterFRB.Entities
 			switch(stateToInterpolateTo)
 			{
 				case  VariableState.spawning:
-					Sprite.BlueRate = (1f - Sprite.Blue) / (float)secondsToTake;
-					Sprite.GreenRate = (1f - Sprite.Green) / (float)secondsToTake;
-					Sprite.RedRate = (1f - Sprite.Red) / (float)secondsToTake;
+					Sprite.BlueRate = (0.565f - Sprite.Blue) / (float)secondsToTake;
+					Sprite.GreenRate = (0.933f - Sprite.Green) / (float)secondsToTake;
+					Sprite.RedRate = (0.565f - Sprite.Red) / (float)secondsToTake;
 					break;
 				case  VariableState.speeding:
 					Sprite.BlueRate = (0f - Sprite.Blue) / (float)secondsToTake;
@@ -476,16 +488,16 @@ namespace SpaceFighterFRB.Entities
 				case  VariableState.spawning:
 					movementSpeedFirstValue = 1f;
 					pointsWorthFirstValue = 0;
-					SpriteBlueFirstValue = 1f;
-					SpriteGreenFirstValue = 1f;
-					SpriteRedFirstValue = 1f;
+					SpriteBlueFirstValue = 0.565f;
+					SpriteGreenFirstValue = 0.933f;
+					SpriteRedFirstValue = 0.565f;
 					if (interpolationValue < 1)
 					{
 						this.SpriteColorOperation = FlatRedBall.Graphics.ColorOperation.ColorTextureAlpha;
 					}
 					break;
 				case  VariableState.speeding:
-					movementSpeedFirstValue = 250f;
+					movementSpeedFirstValue = 200f;
 					pointsWorthFirstValue = 1;
 					SpriteBlueFirstValue = 0f;
 					SpriteGreenFirstValue = 0f;
@@ -501,16 +513,16 @@ namespace SpaceFighterFRB.Entities
 				case  VariableState.spawning:
 					movementSpeedSecondValue = 1f;
 					pointsWorthSecondValue = 0;
-					SpriteBlueSecondValue = 1f;
-					SpriteGreenSecondValue = 1f;
-					SpriteRedSecondValue = 1f;
+					SpriteBlueSecondValue = 0.565f;
+					SpriteGreenSecondValue = 0.933f;
+					SpriteRedSecondValue = 0.565f;
 					if (interpolationValue >= 1)
 					{
 						this.SpriteColorOperation = FlatRedBall.Graphics.ColorOperation.ColorTextureAlpha;
 					}
 					break;
 				case  VariableState.speeding:
-					movementSpeedSecondValue = 250f;
+					movementSpeedSecondValue = 200f;
 					pointsWorthSecondValue = 1;
 					SpriteBlueSecondValue = 0f;
 					SpriteGreenSecondValue = 0f;
@@ -568,6 +580,8 @@ namespace SpaceFighterFRB.Entities
 			{
 				case  "enemyShip2":
 					return enemyShip2;
+				case  "enemyShip2b":
+					return enemyShip2b;
 			}
 			return null;
 		}
@@ -577,6 +591,8 @@ namespace SpaceFighterFRB.Entities
 			{
 				case  "enemyShip2":
 					return enemyShip2;
+				case  "enemyShip2b":
+					return enemyShip2b;
 			}
 			return null;
 		}
@@ -586,6 +602,8 @@ namespace SpaceFighterFRB.Entities
 			{
 				case  "enemyShip2":
 					return enemyShip2;
+				case  "enemyShip2b":
+					return enemyShip2b;
 			}
 			return null;
 		}
