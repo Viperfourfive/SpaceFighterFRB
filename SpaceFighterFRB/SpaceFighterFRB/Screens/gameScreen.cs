@@ -39,8 +39,7 @@ namespace SpaceFighterFRB.Screens
             if (FlatRedBall.Input.InputManager.Xbox360GamePads[0].IsConnected == false)
             {
                 KeyboardButtonMap buttonMap = new KeyboardButtonMap();
-                //MouseState mouseMap = new MouseState();
-
+             
                 //Movement:
                 buttonMap.LeftAnalogUp = Keys.W;
                 buttonMap.LeftAnalogLeft = Keys.A;
@@ -52,10 +51,6 @@ namespace SpaceFighterFRB.Screens
                 buttonMap.RightAnalogLeft = Keys.Left;
                 buttonMap.RightAnalogDown = Keys.Down;
                 buttonMap.RightAnalogRight = Keys.Right;
-                    
-                //var rightStickPostion = new Vector3(mouseMap.X, mouseMap.Y, 0);
-                //buttonMap.RightAnalogLeft = rightStick.X;
-                //buttonMap.RightAnalogUp = rightStick.Y;                
 
                 //Menu navigation and Exit:
                 buttonMap.A = Keys.Space;
@@ -97,6 +92,7 @@ namespace SpaceFighterFRB.Screens
             this.gameHUDInstance.enemiesAliveDisplayText = GlobalData.EnemyData.enemiesKilled;
             this.gameHUDInstance.enemiesSpawnedDisplayText = GlobalData.EnemyData.enemiesSpawned;
             this.gameHUDInstance.waveCounterDisplayText = GlobalData.EnemyData.waveCounter;
+            this.gameHUDInstance.enemiesPerSecondDisplayText = GlobalData.EnemyData.enemiesPerSecond;
 
         }
         private void DetectCollisions()
@@ -274,11 +270,12 @@ namespace SpaceFighterFRB.Screens
 
                 if (TimeManager.CurrentTime - _speeder.spawnTime >= 1)
                 {
+                    /*Have to give it a Velocity for both states independantly, right?*/
                     var direction = _speeder.Velocity;
                     direction.Normalize();
                     _speeder.CurrentState = speeder.VariableState.speeding;
                     _speeder.Velocity = direction * _speeder.movementSpeed;
-                    _speeder.spawnTime = 0;  //Naive??  This forces it to only run once per enemy per wave.
+                    //_speeder.spawnTime = 0;  //Naive??  This forces it to only run once per enemy per wave.
                 }
             }
         }

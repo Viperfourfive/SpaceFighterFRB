@@ -11,6 +11,6 @@ namespace SpaceFighterFRB.Data
         public int enemiesKilled { get; set; }
         public int enemiesSpawned { get; set; }
         public int waveCounter { get; set; }
-        //public double spawnTime { get; set; }
+        public float enemiesPerSecond { get; set; }
     }
 }

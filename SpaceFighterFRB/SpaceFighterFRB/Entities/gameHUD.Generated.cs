@@ -60,6 +60,7 @@ namespace SpaceFighterFRB.Entities
 		private FlatRedBall.Graphics.Text enemiesSpawned;
 		private FlatRedBall.Graphics.Text enemiesAlive;
 		private FlatRedBall.Graphics.Text waveCounter;
+		private FlatRedBall.Graphics.Text enemiesPerSecond;
 		public int scoreDisplayText
 		{
 			get
@@ -115,6 +116,17 @@ namespace SpaceFighterFRB.Entities
 				waveCounter.DisplayText = value.ToString();
 			}
 		}
+		public float enemiesPerSecondDisplayText
+		{
+			get
+			{
+				return float.Parse(enemiesPerSecond.DisplayText);
+			}
+			set
+			{
+				enemiesPerSecond.DisplayText = value.ToString();
+			}
+		}
 		protected Layer LayerProvidedByContainer = null;
 
         public gameHUD()
@@ -154,6 +166,8 @@ namespace SpaceFighterFRB.Entities
 			enemiesAlive.Name = "enemiesAlive";
 			waveCounter = new FlatRedBall.Graphics.Text();
 			waveCounter.Name = "waveCounter";
+			enemiesPerSecond = new FlatRedBall.Graphics.Text();
+			enemiesPerSecond.Name = "enemiesPerSecond";
 			
 			PostInitialize();
 			if (addToManagers)
@@ -195,6 +209,11 @@ namespace SpaceFighterFRB.Entities
 			{
 				waveCounter.SetPixelPerfectScale(LayerProvidedByContainer);
 			}
+			TextManager.AddToLayer(enemiesPerSecond, LayerProvidedByContainer);
+			if (enemiesPerSecond.Font != null)
+			{
+				enemiesPerSecond.SetPixelPerfectScale(LayerProvidedByContainer);
+			}
 		}
 		public virtual void AddToManagers (Layer layerToAddTo)
 		{
@@ -225,6 +244,11 @@ namespace SpaceFighterFRB.Entities
 			if (waveCounter.Font != null)
 			{
 				waveCounter.SetPixelPerfectScale(LayerProvidedByContainer);
+			}
+			TextManager.AddToLayer(enemiesPerSecond, LayerProvidedByContainer);
+			if (enemiesPerSecond.Font != null)
+			{
+				enemiesPerSecond.SetPixelPerfectScale(LayerProvidedByContainer);
 			}
 			AddToManagersBottomUp(layerToAddTo);
 			CustomInitialize();
@@ -269,6 +293,10 @@ namespace SpaceFighterFRB.Entities
 			if (waveCounter != null)
 			{
 				TextManager.RemoveText(waveCounter);
+			}
+			if (enemiesPerSecond != null)
+			{
+				TextManager.RemoveText(enemiesPerSecond);
 			}
 
 
@@ -422,6 +450,27 @@ namespace SpaceFighterFRB.Entities
 			{
 				waveCounter.RelativeY = 100f;
 			}
+			if (enemiesPerSecond.Parent == null)
+			{
+				enemiesPerSecond.CopyAbsoluteToRelative();
+				enemiesPerSecond.AttachTo(this, false);
+			}
+			if (enemiesPerSecond.Parent == null)
+			{
+				enemiesPerSecond.X = -600f;
+			}
+			else
+			{
+				enemiesPerSecond.RelativeX = -600f;
+			}
+			if (enemiesPerSecond.Parent == null)
+			{
+				enemiesPerSecond.Y = -300f;
+			}
+			else
+			{
+				enemiesPerSecond.RelativeY = -300f;
+			}
 			FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = oldShapeManagerSuppressAdd;
 		}
 		public virtual void AddToManagersBottomUp (Layer layerToAddTo)
@@ -451,6 +500,10 @@ namespace SpaceFighterFRB.Entities
 			if (waveCounter != null)
 			{
 				TextManager.RemoveTextOneWay(waveCounter);
+			}
+			if (enemiesPerSecond != null)
+			{
+				TextManager.RemoveTextOneWay(enemiesPerSecond);
 			}
 		}
 		public virtual void AssignCustomVariables (bool callOnContainedElements)
@@ -571,11 +624,28 @@ namespace SpaceFighterFRB.Entities
 			{
 				waveCounter.RelativeY = 100f;
 			}
+			if (enemiesPerSecond.Parent == null)
+			{
+				enemiesPerSecond.X = -600f;
+			}
+			else
+			{
+				enemiesPerSecond.RelativeX = -600f;
+			}
+			if (enemiesPerSecond.Parent == null)
+			{
+				enemiesPerSecond.Y = -300f;
+			}
+			else
+			{
+				enemiesPerSecond.RelativeY = -300f;
+			}
 			scoreDisplayText = 0;
 			enemyTypeDisplayText = 0;
 			enemiesSpawnedDisplayText = 0;
 			enemiesAliveDisplayText = 0;
 			waveCounterDisplayText = 0;
+			enemiesPerSecondDisplayText = 0f;
 		}
 		public virtual void ConvertToManuallyUpdated ()
 		{
@@ -587,6 +657,7 @@ namespace SpaceFighterFRB.Entities
 			TextManager.ConvertToManuallyUpdated(enemiesSpawned);
 			TextManager.ConvertToManuallyUpdated(enemiesAlive);
 			TextManager.ConvertToManuallyUpdated(waveCounter);
+			TextManager.ConvertToManuallyUpdated(enemiesPerSecond);
 		}
 		public static void LoadStaticContent (string contentManagerName)
 		{
@@ -671,6 +742,7 @@ namespace SpaceFighterFRB.Entities
 			FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(enemiesSpawned);
 			FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(enemiesAlive);
 			FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(waveCounter);
+			FlatRedBall.Instructions.InstructionManager.IgnorePausingFor(enemiesPerSecond);
 		}
 		public virtual void MoveToLayer (Layer layerToMoveTo)
 		{
@@ -700,6 +772,11 @@ namespace SpaceFighterFRB.Entities
 				LayerProvidedByContainer.Remove(waveCounter);
 			}
 			TextManager.AddToLayer(waveCounter, layerToMoveTo);
+			if (LayerProvidedByContainer != null)
+			{
+				LayerProvidedByContainer.Remove(enemiesPerSecond);
+			}
+			TextManager.AddToLayer(enemiesPerSecond, layerToMoveTo);
 			LayerProvidedByContainer = layerToMoveTo;
 		}
 
