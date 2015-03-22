@@ -9,6 +9,7 @@ namespace SpaceFighterFRB.Data
     {
         public bool exit { get; set; }
         public bool play { get; set; }
+        public bool AButton { get; set; }
 
     }
 }

@@ -39,28 +39,24 @@ namespace SpaceFighterFRB.Screens
                 buttonMap.LeftAnalogUp = Keys.Up;
                 buttonMap.LeftAnalogDown = Keys.Down;
                 buttonMap.A = Keys.Enter;
+                buttonMap.Back = Keys.Escape;
 
                 // Continue assigning the keys you want to use here:
 
                 // And now tell the 1st controller to use this button map
                 InputManager.Xbox360GamePads[0].ButtonMap = buttonMap;
             }
-
-            GlobalData.MenuData.exit = false;
-            GlobalData.MenuData.play = false;
         }
 
         void CustomActivity(bool firstTimeCalled)
         {
+            DetectManualExit();
+
             //ToDo: Add Menu Music
 
-            if (GlobalData.MenuData.play)
+            if (GlobalData.MenuData.AButton == true)
             {
-                this.MoveToScreen(typeof(gameScreen).FullName);
-            }
-            if (GlobalData.MenuData.exit)
-            {
-                FlatRedBallServices.Game.Exit();
+                CheckCollision();
             }
 
         }
@@ -75,6 +71,27 @@ namespace SpaceFighterFRB.Screens
         {
 
 
+        }
+
+        private void CheckCollision()
+        {
+            if (menuCursorInstance.collisionMesh.CollideAgainst(menuPlayBoxInstance.collisionMesh))
+            {
+                GlobalData.MenuData.play = false;
+                this.MoveToScreen(typeof(gameScreen).FullName);
+            }
+            if (menuCursorInstance.collisionMesh.CollideAgainst(menuExitBoxInstance.collisionMesh))
+            {
+                FlatRedBallServices.Game.Exit();
+            }
+        }
+
+        void DetectManualExit()
+        {
+            if (GlobalData.MenuData.exit == true)
+            {
+                FlatRedBallServices.Game.Exit();
+            }
         }
 	}
 }

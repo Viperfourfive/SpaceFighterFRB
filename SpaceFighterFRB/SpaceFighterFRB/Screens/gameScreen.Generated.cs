@@ -49,6 +49,7 @@ namespace SpaceFighterFRB.Screens
 		private SpaceFighterFRB.Entities.gameHUD gameHUDInstance;
 		private SpaceFighterFRB.Entities.enemySpawner enemySpawnerInstance;
 		private PositionedObjectList<SpaceFighterFRB.Entities.playerShip> playerShipList;
+		private PositionedObjectList<SpaceFighterFRB.Entities.playerShipDead> playerShipDeadList;
 		private PositionedObjectList<SpaceFighterFRB.Entities.speeder> speederList;
 		private SpaceFighterFRB.Entities.gameOverHUD gameOverHUDInstance;
 
@@ -71,6 +72,8 @@ namespace SpaceFighterFRB.Screens
 			enemySpawnerInstance.Name = "enemySpawnerInstance";
 			playerShipList = new PositionedObjectList<SpaceFighterFRB.Entities.playerShip>();
 			playerShipList.Name = "playerShipList";
+			playerShipDeadList = new PositionedObjectList<SpaceFighterFRB.Entities.playerShipDead>();
+			playerShipDeadList.Name = "playerShipDeadList";
 			speederList = new PositionedObjectList<SpaceFighterFRB.Entities.speeder>();
 			speederList.Name = "speederList";
 			gameOverHUDInstance = new SpaceFighterFRB.Entities.gameOverHUD(ContentManagerName, false);
@@ -134,6 +137,14 @@ namespace SpaceFighterFRB.Screens
 						playerShipList[i].Activity();
 					}
 				}
+				for (int i = playerShipDeadList.Count - 1; i > -1; i--)
+				{
+					if (i < playerShipDeadList.Count)
+					{
+						// We do the extra if-check because activity could destroy any number of entities
+						playerShipDeadList[i].Activity();
+					}
+				}
 				for (int i = speederList.Count - 1; i > -1; i--)
 				{
 					if (i < speederList.Count)
@@ -185,6 +196,7 @@ namespace SpaceFighterFRB.Screens
 			bulletList.MakeOneWay();
 			enemyShipList.MakeOneWay();
 			playerShipList.MakeOneWay();
+			playerShipDeadList.MakeOneWay();
 			speederList.MakeOneWay();
 			for (int i = bulletList.Count - 1; i > -1; i--)
 			{
@@ -208,6 +220,10 @@ namespace SpaceFighterFRB.Screens
 			{
 				playerShipList[i].Destroy();
 			}
+			for (int i = playerShipDeadList.Count - 1; i > -1; i--)
+			{
+				playerShipDeadList[i].Destroy();
+			}
 			for (int i = speederList.Count - 1; i > -1; i--)
 			{
 				speederList[i].Destroy();
@@ -220,6 +236,7 @@ namespace SpaceFighterFRB.Screens
 			bulletList.MakeTwoWay();
 			enemyShipList.MakeTwoWay();
 			playerShipList.MakeTwoWay();
+			playerShipDeadList.MakeTwoWay();
 			speederList.MakeTwoWay();
 
 			base.Destroy();
@@ -257,6 +274,10 @@ namespace SpaceFighterFRB.Screens
 			{
 				playerShipList[i].Destroy();
 			}
+			for (int i = playerShipDeadList.Count - 1; i > -1; i--)
+			{
+				playerShipDeadList[i].Destroy();
+			}
 			for (int i = speederList.Count - 1; i > -1; i--)
 			{
 				speederList[i].Destroy();
@@ -288,6 +309,10 @@ namespace SpaceFighterFRB.Screens
 			for (int i = 0; i < playerShipList.Count; i++)
 			{
 				playerShipList[i].ConvertToManuallyUpdated();
+			}
+			for (int i = 0; i < playerShipDeadList.Count; i++)
+			{
+				playerShipDeadList[i].ConvertToManuallyUpdated();
 			}
 			for (int i = 0; i < speederList.Count; i++)
 			{

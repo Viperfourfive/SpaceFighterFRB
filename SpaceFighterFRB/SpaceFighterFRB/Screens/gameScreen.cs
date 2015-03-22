@@ -60,22 +60,24 @@ namespace SpaceFighterFRB.Screens
                 //Menu navigation and Exit:
                 buttonMap.A = Keys.Space;
                 buttonMap.Back = Keys.Escape;
+                buttonMap.Start = Keys.F12;
 
                 // And now tell the 1st controller to use this button map
                 InputManager.Xbox360GamePads[0].ButtonMap = buttonMap;
             }
-            GlobalData.MenuData.exit = false;
         }
 
 		void CustomActivity(bool firstTimeCalled)
 		{
-            DetectManualExit();
+            DetectExit();
+
             DetectCollisions();
             ActivateSpeeders();
-            FindAngleToPlayer();
+            FindAngleToPlayer(); //seekers /*"emeyShip ToDo: change name"*/
             UpdateHUD();
+
             DetectEndOfGame();
-            	
+            DetectEndOfGameInput();
         }
 
 		void CustomDestroy()
@@ -178,7 +180,6 @@ namespace SpaceFighterFRB.Screens
                     }
                 }
             }
-
         }
 
         private void CollisionEnemiesVsPlayer()
@@ -277,7 +278,7 @@ namespace SpaceFighterFRB.Screens
                     direction.Normalize();
                     _speeder.CurrentState = speeder.VariableState.speeding;
                     _speeder.Velocity = direction * _speeder.movementSpeed;
-                    _speeder.spawnTime = 0;  //Naive??  This forces it to only run once.
+                    _speeder.spawnTime = 0;  //Naive??  This forces it to only run once per enemy per wave.
                 }
             }
         }
@@ -287,21 +288,69 @@ namespace SpaceFighterFRB.Screens
             playerShip _playerShip = new playerShip(ContentManagerName);
             playerShipList.Add(_playerShip);
         }
+
+        private void CreatePlayerDead()
+        {
+            playerShipDead _playerShipDead = new playerShipDead(ContentManagerName);
+            playerShipDeadList.Add(_playerShipDead);
+            _playerShipDead.Position = GlobalData.PlayerData.position;
+            _playerShipDead.lastRotationZ = GlobalData.PlayerData.rotation;
+
+        }
         
-        void DetectEndOfGame()
+        private void DetectEndOfGame()
         {
             if(gameOverHUDInstance.Visible == false && this.playerShipList.Count == 0)
             {
                 gameOverHUDInstance.Visible = true;
+                if (this.playerShipDeadList.Count <= 0)
+                {
+                    CreatePlayerDead();
+                }
             }
         }
 
-        void DetectManualExit()
+        private void DetectEndOfGameInput()
+        {
+            if (playerShipList.Count == 0)
+            {
+                DetectExit();
+                DetectPlay();
+            }
+        }
+
+        void DetectExit()  //Worthwhile to make this glocbal??
         {
             if (GlobalData.MenuData.exit == true)
             {
                 FlatRedBallServices.Game.Exit();
             }
+        }
+
+        void DetectPlay()  //Worthwhile to make this glocbal??
+        {
+            if (GlobalData.MenuData.play == true)
+            {
+                ResetGlobalData();
+                this.MoveToScreen(typeof(gameScreen).FullName);
+
+            }
+        }
+
+        void ResetGlobalData()  //Worthwhile to make this glocbal??
+        {
+            GlobalData.EnemyData.enemiesKilled = 0;
+            GlobalData.EnemyData.enemiesSpawned = 0;
+            GlobalData.EnemyData.enemyType = 0;
+            GlobalData.EnemyData.waveCounter = 0;
+
+            GlobalData.PlayerData.score = 0;
+            GlobalData.PlayerData.position = new Vector3(0, 0, 0);
+            GlobalData.PlayerData.rotation = 0f;
+
+            GlobalData.MenuData.play = false;
+            GlobalData.MenuData.AButton = false;
+
         }
 	}
 }

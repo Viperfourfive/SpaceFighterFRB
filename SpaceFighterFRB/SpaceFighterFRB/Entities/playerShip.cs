@@ -41,6 +41,8 @@ namespace SpaceFighterFRB.Entities
                 playerShipHP = value;
                 if (playerShipHP <= 0)
                 {
+                    GlobalData.PlayerData.position = this.Position;
+                    GlobalData.PlayerData.rotation = this.lastRotationZ;
                     this.Destroy();
                 }
             }
@@ -114,7 +116,7 @@ namespace SpaceFighterFRB.Entities
         {
             if (mGamePad.ButtonDown(Xbox360GamePad.Button.Back))
             {
-                GlobalData.MenuData.exit = true;
+                FlatRedBallServices.Game.Exit();
             }
         }
 	}

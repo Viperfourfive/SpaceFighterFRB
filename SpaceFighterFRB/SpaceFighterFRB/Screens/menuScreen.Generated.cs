@@ -42,7 +42,7 @@ namespace SpaceFighterFRB.Screens
 		#endif
 		
 		private SpaceFighterFRB.Entities.menuHUD menuHUDInstance;
-		private SpaceFighterFRB.Entities.menuCursor cursorInstance;
+		private SpaceFighterFRB.Entities.menuCursor menuCursorInstance;
 		private SpaceFighterFRB.Entities.menuPlayBox menuPlayBoxInstance;
 		private SpaceFighterFRB.Entities.menuExitBox menuExitBoxInstance;
 
@@ -57,8 +57,8 @@ namespace SpaceFighterFRB.Screens
 			LoadStaticContent(ContentManagerName);
 			menuHUDInstance = new SpaceFighterFRB.Entities.menuHUD(ContentManagerName, false);
 			menuHUDInstance.Name = "menuHUDInstance";
-			cursorInstance = new SpaceFighterFRB.Entities.menuCursor(ContentManagerName, false);
-			cursorInstance.Name = "cursorInstance";
+			menuCursorInstance = new SpaceFighterFRB.Entities.menuCursor(ContentManagerName, false);
+			menuCursorInstance.Name = "menuCursorInstance";
 			menuPlayBoxInstance = new SpaceFighterFRB.Entities.menuPlayBox(ContentManagerName, false);
 			menuPlayBoxInstance.Name = "menuPlayBoxInstance";
 			menuExitBoxInstance = new SpaceFighterFRB.Entities.menuExitBox(ContentManagerName, false);
@@ -78,7 +78,7 @@ namespace SpaceFighterFRB.Screens
 		public override void AddToManagers ()
 		{
 			menuHUDInstance.AddToManagers(mLayer);
-			cursorInstance.AddToManagers(mLayer);
+			menuCursorInstance.AddToManagers(mLayer);
 			menuPlayBoxInstance.AddToManagers(mLayer);
 			menuExitBoxInstance.AddToManagers(mLayer);
 			base.AddToManagers();
@@ -94,7 +94,7 @@ namespace SpaceFighterFRB.Screens
 			{
 				
 				menuHUDInstance.Activity();
-				cursorInstance.Activity();
+				menuCursorInstance.Activity();
 				menuPlayBoxInstance.Activity();
 				menuExitBoxInstance.Activity();
 			}
@@ -122,10 +122,10 @@ namespace SpaceFighterFRB.Screens
 				menuHUDInstance.Destroy();
 				menuHUDInstance.Detach();
 			}
-			if (cursorInstance != null)
+			if (menuCursorInstance != null)
 			{
-				cursorInstance.Destroy();
-				cursorInstance.Detach();
+				menuCursorInstance.Destroy();
+				menuCursorInstance.Detach();
 			}
 			if (menuPlayBoxInstance != null)
 			{
@@ -149,21 +149,21 @@ namespace SpaceFighterFRB.Screens
 		{
 			bool oldShapeManagerSuppressAdd = FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue;
 			FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = true;
-			if (cursorInstance.Parent == null)
+			if (menuCursorInstance.Parent == null)
 			{
-				cursorInstance.X = -35f;
+				menuCursorInstance.X = -35f;
 			}
 			else
 			{
-				cursorInstance.RelativeX = -35f;
+				menuCursorInstance.RelativeX = -35f;
 			}
-			if (cursorInstance.Parent == null)
+			if (menuCursorInstance.Parent == null)
 			{
-				cursorInstance.Y = 60f;
+				menuCursorInstance.Y = 60f;
 			}
 			else
 			{
-				cursorInstance.RelativeY = 60f;
+				menuCursorInstance.RelativeY = 60f;
 			}
 			FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = oldShapeManagerSuppressAdd;
 		}
@@ -175,7 +175,7 @@ namespace SpaceFighterFRB.Screens
 		public virtual void RemoveFromManagers ()
 		{
 			menuHUDInstance.RemoveFromManagers();
-			cursorInstance.RemoveFromManagers();
+			menuCursorInstance.RemoveFromManagers();
 			menuPlayBoxInstance.RemoveFromManagers();
 			menuExitBoxInstance.RemoveFromManagers();
 		}
@@ -184,31 +184,31 @@ namespace SpaceFighterFRB.Screens
 			if (callOnContainedElements)
 			{
 				menuHUDInstance.AssignCustomVariables(true);
-				cursorInstance.AssignCustomVariables(true);
+				menuCursorInstance.AssignCustomVariables(true);
 				menuPlayBoxInstance.AssignCustomVariables(true);
 				menuExitBoxInstance.AssignCustomVariables(true);
 			}
-			if (cursorInstance.Parent == null)
+			if (menuCursorInstance.Parent == null)
 			{
-				cursorInstance.X = -35f;
+				menuCursorInstance.X = -35f;
 			}
 			else
 			{
-				cursorInstance.RelativeX = -35f;
+				menuCursorInstance.RelativeX = -35f;
 			}
-			if (cursorInstance.Parent == null)
+			if (menuCursorInstance.Parent == null)
 			{
-				cursorInstance.Y = 60f;
+				menuCursorInstance.Y = 60f;
 			}
 			else
 			{
-				cursorInstance.RelativeY = 60f;
+				menuCursorInstance.RelativeY = 60f;
 			}
 		}
 		public virtual void ConvertToManuallyUpdated ()
 		{
 			menuHUDInstance.ConvertToManuallyUpdated();
-			cursorInstance.ConvertToManuallyUpdated();
+			menuCursorInstance.ConvertToManuallyUpdated();
 			menuPlayBoxInstance.ConvertToManuallyUpdated();
 			menuExitBoxInstance.ConvertToManuallyUpdated();
 		}
