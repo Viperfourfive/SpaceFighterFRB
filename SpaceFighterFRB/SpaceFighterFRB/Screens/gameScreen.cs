@@ -53,9 +53,8 @@ namespace SpaceFighterFRB.Screens
                 buttonMap.RightAnalogRight = Keys.Right;
 
                 //Menu navigation and Exit:
-                buttonMap.A = Keys.Space;
                 buttonMap.Back = Keys.Escape;
-                buttonMap.Start = Keys.F12;
+                buttonMap.Start = Keys.Enter;
 
                 // And now tell the 1st controller to use this button map
                 InputManager.Xbox360GamePads[0].ButtonMap = buttonMap;
@@ -154,8 +153,7 @@ namespace SpaceFighterFRB.Screens
                         GlobalData.PlayerData.score += _enemyShip.pointsWorth;
                         this.gameHUDInstance.scoreDisplayText = GlobalData.PlayerData.score;
 
-                        GlobalData.EnemyData.enemiesKilled++; 
-
+                        GlobalData.EnemyData.enemiesKilled++;
                         break;
                     }
                 }
@@ -171,7 +169,6 @@ namespace SpaceFighterFRB.Screens
                         this.gameHUDInstance.scoreDisplayText = GlobalData.PlayerData.score;
 
                         GlobalData.EnemyData.enemiesKilled++;
-
                         break;
                     }
                 }
@@ -210,7 +207,7 @@ namespace SpaceFighterFRB.Screens
 
         private void CollisionEnemiesVsEnemy()
         {
-            /*For now I like this wave of enemies stacking on top of one another.*/
+            ///*For now I like this wave of enemies stacking on top of one another.*///
             //for (int i = enemyShipList.Count - 1; i > -1; i--)
             //{
             //    enemyShip _enemyShip1 = enemyShipList[i];
@@ -232,7 +229,6 @@ namespace SpaceFighterFRB.Screens
                     if (j != i)
                     {
                         speeder _speeder2 = speederList[j];
-                        /*bounce each other*/
                         _speeder1.CollisionMesh.CollideAgainstBounce(_speeder2.CollisionMesh, 1, 1, 1);
                     }
                 }
@@ -316,7 +312,7 @@ namespace SpaceFighterFRB.Screens
             }
         }
 
-        void DetectExit()  //Worthwhile to make this glocbal??
+        void DetectExit()  //Worthwhile to make this method glocbal??
         {
             if (GlobalData.MenuData.exit == true)
             {
@@ -324,7 +320,7 @@ namespace SpaceFighterFRB.Screens
             }
         }
 
-        void DetectPlay()  //Worthwhile to make this glocbal??
+        void DetectPlay()  //Worthwhile to make this method glocbal??
         {
             if (GlobalData.MenuData.play == true)
             {
@@ -334,12 +330,12 @@ namespace SpaceFighterFRB.Screens
             }
         }
 
-        void ResetGlobalData()  //Worthwhile to make this glocbal??
+        void ResetGlobalData()  //Worthwhile to make this method glocbal??
         {
             GlobalData.EnemyData.enemiesKilled = 0;
             GlobalData.EnemyData.enemiesSpawned = 0;
             GlobalData.EnemyData.enemyType = 0;
-            GlobalData.EnemyData.waveCounter = 0;
+            GlobalData.EnemyData.waveCounter = 1;
 
             GlobalData.PlayerData.score = 0;
             GlobalData.PlayerData.position = new Vector3(0, 0, 0);

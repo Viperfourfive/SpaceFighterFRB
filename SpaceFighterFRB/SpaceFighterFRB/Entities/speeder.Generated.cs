@@ -84,15 +84,15 @@ namespace SpaceFighterFRB.Entities
 					case  VariableState.Unknown:
 						break;
 					case  VariableState.spawning:
-						movementSpeed = 1f;
-						pointsWorth = 0;
+						movementSpeed = 25f;
+						pointsWorth = 1;
 						SpriteBlue = 0.565f;
 						SpriteGreen = 0.933f;
 						SpriteRed = 0.565f;
 						SpriteColorOperation = FlatRedBall.Graphics.ColorOperation.ColorTextureAlpha;
 						break;
 					case  VariableState.speeding:
-						movementSpeed = 200f;
+						movementSpeed = 250f;
 						pointsWorth = 1;
 						SpriteBlue = 0f;
 						SpriteGreen = 0f;
@@ -288,6 +288,7 @@ namespace SpaceFighterFRB.Entities
 				mCollisionMesh.AttachTo(this, false);
 			}
 			CollisionMesh.Radius = 8.75f;
+			CollisionMesh.Visible = false;
 			if (CollisionMesh.Parent == null)
 			{
 				CollisionMesh.X = 0f;
@@ -296,7 +297,6 @@ namespace SpaceFighterFRB.Entities
 			{
 				CollisionMesh.RelativeX = 0f;
 			}
-			CollisionMesh.Visible = false;
 			FlatRedBall.Math.Geometry.ShapeManager.SuppressAddingOnVisibilityTrue = oldShapeManagerSuppressAdd;
 		}
 		public virtual void AddToManagersBottomUp (Layer layerToAddTo)
@@ -323,6 +323,7 @@ namespace SpaceFighterFRB.Entities
 			Sprite.Texture = enemyShip2b;
 			Sprite.TextureScale = 0.55f;
 			mCollisionMesh.Radius = 8.75f;
+			mCollisionMesh.Visible = false;
 			if (mCollisionMesh.Parent == null)
 			{
 				mCollisionMesh.X = 0f;
@@ -331,7 +332,6 @@ namespace SpaceFighterFRB.Entities
 			{
 				mCollisionMesh.RelativeX = 0f;
 			}
-			mCollisionMesh.Visible = false;
 		}
 		public virtual void ConvertToManuallyUpdated ()
 		{
@@ -486,8 +486,8 @@ namespace SpaceFighterFRB.Entities
 			switch(firstState)
 			{
 				case  VariableState.spawning:
-					movementSpeedFirstValue = 1f;
-					pointsWorthFirstValue = 0;
+					movementSpeedFirstValue = 25f;
+					pointsWorthFirstValue = 1;
 					SpriteBlueFirstValue = 0.565f;
 					SpriteGreenFirstValue = 0.933f;
 					SpriteRedFirstValue = 0.565f;
@@ -497,7 +497,7 @@ namespace SpaceFighterFRB.Entities
 					}
 					break;
 				case  VariableState.speeding:
-					movementSpeedFirstValue = 200f;
+					movementSpeedFirstValue = 250f;
 					pointsWorthFirstValue = 1;
 					SpriteBlueFirstValue = 0f;
 					SpriteGreenFirstValue = 0f;
@@ -511,8 +511,8 @@ namespace SpaceFighterFRB.Entities
 			switch(secondState)
 			{
 				case  VariableState.spawning:
-					movementSpeedSecondValue = 1f;
-					pointsWorthSecondValue = 0;
+					movementSpeedSecondValue = 25f;
+					pointsWorthSecondValue = 1;
 					SpriteBlueSecondValue = 0.565f;
 					SpriteGreenSecondValue = 0.933f;
 					SpriteRedSecondValue = 0.565f;
@@ -522,7 +522,7 @@ namespace SpaceFighterFRB.Entities
 					}
 					break;
 				case  VariableState.speeding:
-					movementSpeedSecondValue = 200f;
+					movementSpeedSecondValue = 250f;
 					pointsWorthSecondValue = 1;
 					SpriteBlueSecondValue = 0f;
 					SpriteGreenSecondValue = 0f;
