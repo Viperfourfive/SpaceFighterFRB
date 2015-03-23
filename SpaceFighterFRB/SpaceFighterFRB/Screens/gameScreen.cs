@@ -63,6 +63,7 @@ namespace SpaceFighterFRB.Screens
 
 		void CustomActivity(bool firstTimeCalled)
 		{
+            TurnOffVibration();
             DetectExit();
 
             DetectCollisions();
@@ -104,7 +105,7 @@ namespace SpaceFighterFRB.Screens
             CollisionBounds();
             CollisionEnemiesVsBullet();
             CollisionEnemiesVsEnemy(); /*ToDo: performance decrease on high object counts.  Correct by adding waves
-                   in lieu of static spawn rates or add partitioning of enemies into multiple lists.*/
+                   in lieu of static spawn rates or add Partitioning of enemies into multiple lists.*/
             
             //ToDo: add when adding enemies that shoot
             //CollisionBulletsVsPlayer();
@@ -185,6 +186,7 @@ namespace SpaceFighterFRB.Screens
                 if (_enemyShip.CollisionMesh.CollideAgainst(_playerShip.CollisionMesh))
                 {
                     _playerShip.HP--;
+                    _playerShip.LeftVibrationDuration = TimeManager.CurrentTime;
                     _enemyShip.Destroy();
                     GlobalData.EnemyData.enemiesKilled++;
                     break;
@@ -198,6 +200,7 @@ namespace SpaceFighterFRB.Screens
                 if (_speeder.CollisionMesh.CollideAgainst(_playerShip.CollisionMesh))
                 {
                     _playerShip.HP--;
+                    _playerShip.LeftVibrationDuration = TimeManager.CurrentTime;
                     _speeder.Destroy();
                     GlobalData.EnemyData.enemiesKilled++;
                     break;
@@ -290,6 +293,15 @@ namespace SpaceFighterFRB.Screens
             _playerShipDead.lastRotationZ = GlobalData.PlayerData.rotation;
 
         }
+
+        private void TurnOffVibration()
+        {
+            if (playerShipList.Count > 0)
+            {
+                playerShip _playerShip = playerShipList[0];
+                
+            }
+        }
         
         private void DetectEndOfGame()
         {
@@ -312,7 +324,7 @@ namespace SpaceFighterFRB.Screens
             }
         }
 
-        void DetectExit()  //Worthwhile to make this method glocbal??
+        void DetectExit()  //Worthwhile to make this method global??
         {
             if (GlobalData.MenuData.exit == true)
             {
@@ -320,7 +332,7 @@ namespace SpaceFighterFRB.Screens
             }
         }
 
-        void DetectPlay()  //Worthwhile to make this method glocbal??
+        void DetectPlay()  //Worthwhile to make this method global??
         {
             if (GlobalData.MenuData.play == true)
             {
@@ -330,7 +342,7 @@ namespace SpaceFighterFRB.Screens
             }
         }
 
-        void ResetGlobalData()  //Worthwhile to make this method glocbal??
+        void ResetGlobalData()  //Worthwhile to make this method global??
         {
             GlobalData.EnemyData.enemiesKilled = 0;
             GlobalData.EnemyData.enemiesSpawned = 0;

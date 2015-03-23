@@ -47,6 +47,33 @@ namespace SpaceFighterFRB.Entities
                 }
             }
         }
+
+        double leftMotorDuration;
+        public double LeftVibrationDuration
+        {
+            get
+            {
+                return leftMotorDuration;
+            }
+            set
+            {
+                leftMotorDuration = value;
+            }
+        }
+
+        double rightMotorDuration;
+        public double RightVibrationDuration
+        {
+            get
+            {
+                return rightMotorDuration;
+            }
+            set
+            {
+                rightMotorDuration = value;
+            }
+        }
+
         Xbox360GamePad mGamePad;
 
         /// <summary>
@@ -64,8 +91,10 @@ namespace SpaceFighterFRB.Entities
 		private void CustomActivity()
 		{
             DetectManualExit();
+            
             Move();
-
+            DetectLeftMotor();
+            DetectRightMotor();
 		}
 
 		private void CustomDestroy()
@@ -110,6 +139,37 @@ namespace SpaceFighterFRB.Entities
                 _b.Position += this.RotationMatrix.Up * 5;
                 _b.RotationZ = this.RotationZ;
                 _b.Velocity = this.RotationMatrix.Up * _b.movementSpeed;
+
+                this.rightMotorDuration = TimeManager.CurrentTime;
+        }
+
+        void DetectLeftMotor()
+        {
+            if(TimeManager.SecondsSince(leftMotorDuration) <= 1)
+            {
+                mGamePad.SetVibration(1f, 0f);
+            }
+            else
+            {
+                TurnOffVibration();
+            }
+        }
+
+        void DetectRightMotor()
+        {
+            if (TimeManager.SecondsSince(rightMotorDuration) <= .2)
+            {
+                mGamePad.SetVibration(0f, 1f);
+            }
+            else
+            {
+                TurnOffVibration();
+            }
+        }
+
+        void TurnOffVibration()
+        {
+            mGamePad.SetVibration(0f, 0f);
         }
 
         void DetectManualExit()
